@@ -1,0 +1,43 @@
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+/*.ul-tabs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.li-tabs {
+    float: left;
+    border: 1px solid #000;
+    border-bottom-width: 0;
+    margin: 3px 3px 0px 3px;
+    padding: 5px 5px 0px 5px;
+    background-color: #CCC;
+    color: #696969;
+}
+#mainView-tabs {
+    border: 1px solid black;
+	clear: both;
+	padding: 0 1em;
+}
+.active {
+    background-color: #FFF;
+    color: #000;
+}*/

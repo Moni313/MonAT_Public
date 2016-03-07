@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html ng-app="dataQuality" ng-controller="dataQualityController" xmlns="http://www.w3.org/1999/html" lang="en">
+  <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+      {% load staticfiles %}
+      <link rel="stylesheet" href="{% static "bootstrap/dist/css/bootstrap.min.css" %}">
+      <link rel="stylesheet" href="{% static "nvd3/build/nv.d3.min.css" %}">
+      <link rel="stylesheet" href="{% static "nvd3/build/nv.d3.min.css.map" %}">
+      <link rel="stylesheet" href="{% static "mycss/mycss.css" %}">
+
+
+      <title>LeeDA data analysis</title>
+
+  </head>
+
+
+<body>
+
+<script type="text/javascript" src={% static "jquery/dist/jquery.js" %}></script>
+<script type="text/javascript" src={% static "bootstrap/dist/js/bootstrap.js" %}></script>
+
+<script type="text/javascript" src={% static "angular/angular.js" %}></script>
+<script type="text/javascript" src={% static "d3/d3.min.js" %}></script>
+<script type="text/javascript" src={% static "nvd3/build/nv.d3.js" %}></script> <!-- or use another assembly -->
+<script type="text/javascript" src={% static "angular-nvd3/dist/angular-nvd3.js" %}></script>
+<script type="text/javascript" src={% static "jstat/dist/jstat.min.js" %}></script>
+
+<script type="text/javascript" src={% static "DataQuality/dataquality.js" %}></script>
+<script type="text/javascript" src={% static "DataQuality/dqControllers.js" %}></script>
+<script type="text/javascript" src={% static "DataQuality/dqFactory.js" %}></script>
+<script type="text/javascript" src={% static "DataQuality/dqDirective.js" %}></script>
+<script type="text/javascript" src={% static "angular-bootstrap/ui-bootstrap-tpls.min.js" %}></script>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <ng-horizontal-menu></ng-horizontal-menu>
+    </div>
+
+    <div ng-if="$root.ready">
+
+        <div class="col-md-2" ng-controller="AccordionCtrl">
+            <uib-accordion close-others="oneAtATime">
+                <ng-stp-menu></ng-stp-menu>
+                <ng-pts-menu></ng-pts-menu>
+            </uib-accordion>
+        </div>
+
+        <div class="col-md-10">
+            <ng-main></ng-main>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!-- if completeness -->
+<div ng-controller="showStpCompleteness">
+    <div ng-if="$root.gv.chartStpVars">
+        <div class="col-md-6 pull-left">
+        <nvd3 config="{deepWatchData: true}"
+              options="optionsMultiBarHorizontalChartCompleteness"
+              data="dataMultiBarHorizontalChartCompleteness">
+        </nvd3>
+        </div>
+        <h6>{[{JSON.stringify($root.gv.stpPathCompleteness)}]}</h6>
+        <div class="col-md-6">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <td>Variable</td>
+                        <td># record missing</td>
+                        <td># record present</td>
+                        <td># total records</td>
+                        <td>min</td>
+                        <td>mean</td>
+                        <td>max</td>
+                    </tr>
+                </thead>
+                <tr ng-repeat="row in $root.gv.tableCompleteness">
+                    <td>{[{row.variable}]}</td>
+                    <td>{[{row.missing}]}</td>
+                    <td>{[{row.present}]}</td>
+                    <td>{[{row.records}]}</td>
+                    <td>{[{row.minV}]}</td>
+                    <td>{[{row.meanV}]}</td>
+                    <td>{[{row.maxV}]}</td>
+                </tr>
+            </table>
+            <nvd3 config="{deepWatchData: true, refreshDataOnly: false}"
+                  options="optionsSunburstCompleteness"
+                  data="dataSunburstCompleteness"></nvd3>
+        </div>
+    </div>
+</div>
+
+<!-- if duplication -->
+
+<!-- if x, y -->
+

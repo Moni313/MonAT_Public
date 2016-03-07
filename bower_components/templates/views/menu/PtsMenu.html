@@ -1,0 +1,51 @@
+<uib-accordion-group is-open="status.open.isSecondOpen">
+    <uib-accordion-heading>
+        <small>Plot than select
+            <i class="pull-right glyphicon"
+                            ng-class="{'glyphicon-chevron-down': status.open.isSecondOpen, 'glyphicon-chevron-right': !status.open.isSecondOpen}">
+            </i>
+        </small>
+    </uib-accordion-heading>
+
+
+
+    <div ng-controller="xPtsCtrl">
+        <label for="repeatSelectX">X: </label><a role="button" ng-click="$root.$broadcast('resetVarX')" class="btn-xs pull-right">Reset</a>
+        <select name="repeatSelectX" ng-model="$root.globalVariables.stpX">
+        <option ng-repeat="variable in $root.gv.vars" value="{[{variable.Name}]}">{[{variable.Name}]}</option>
+        </select>
+    </div>
+
+
+    <div ng-controller="yPtsCtrl">
+        <label for="repeatSelectY">Y: </label><a role="button" ng-click="$root.$broadcast('resetVarY')" class="btn-xs pull-right">Reset</a>
+        <select name="repeatSelectY" ng-model="$root.globalVariables.stpY">
+        <option ng-repeat="variable in $root.gv.vars" value="{[{variable.Name}]}">{[{variable.Name}]}</option>
+        </select>
+    </div>
+    <div>
+        <br/>
+        <button type="button" class="btn btn-default btn-xs pull-right" ng-model="$root.chartPtsPlot" uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+        Show/Hide chart
+    </button>
+        <br/>
+    </div>
+
+    <hr/>
+
+    <div ng-controller="allVarsPtsCtrl">
+        <label>
+            <input type="checkbox" ng-model="areStpAllChecked" ng-click="checkStpAll()"> </input> All
+        </label><a role="button" ng-click="$root.$broadcast('resetStpAll')" class="btn-xs pull-right">Reset</a>
+        <label class=" btn-xs well-xs" ng-repeat="variable in $root.gv.vars">
+            <input type="checkbox" class="well-xs" ng-model="variable.Selected"> </input>  {[{variable.Name}]}</label>
+    </div>
+    <div>
+        <button type="button" ng-click="$root.$broadcast('refresh')" class="btn btn-default btn-xs">Refresh</button>
+        <button type="button" class="btn btn-default btn-xs pull-right" ng-model="$root.chartPtsVars" uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+            Add/Remove
+        </button>
+    </div>
+
+
+</uib-accordion-group>
