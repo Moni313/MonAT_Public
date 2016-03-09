@@ -1,5 +1,29 @@
 <!-- if completeness -->
 <div ng-controller="showStpCompleteness">
+
+    <!-- plot -->
+    <div ng-controller="stpPlotCtrl">
+        <div class="row">
+            <div><nvd3 options="optionStpXSharingY"
+                       data="dataStpXSharingY"></nvd3>
+            </div>
+            <div ng-show="$root.stpPlotReady" class="col-md-10">
+                <p id="timeExe"></p>
+                <nvd3 options="optionStpPlot"
+                      data="dataStpPlot"
+                      api="api"
+                      config="{deepWatchDataDepth: 0, refreshDataOnly: true}"></nvd3>
+            </div>
+        </div>
+        <div><nvd3 options="optionStpYSharingX"
+                       data="dataStpYSharingX"></nvd3>
+            </div>
+        <div ng-show="stpPlotReady"><br /><hr /></div>
+    </div>
+    <!-- end plot -->
+
+
+
     <div ng-if="$root.gv.chartStpVars">
         <div class="col-md-6 pull-left">
         <nvd3 config="{deepWatchData: true}"
@@ -9,6 +33,14 @@
         </div>
         <h6>{[{JSON.stringify($root.gv.stpPathCompleteness)}]}</h6>
         <div class="col-md-6">
+
+            <!-- sunburst -->
+            <nvd3 config="{deepWatchData: true, refreshDataOnly: false}"
+                  options="optionsSunburstCompleteness"
+                  data="dataSunburstCompleteness"></nvd3>
+            <!-- end sunburst -->
+
+            <!-- table -->
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -31,9 +63,7 @@
                     <td>{[{row.maxV}]}</td>
                 </tr>
             </table>
-            <nvd3 config="{deepWatchData: true, refreshDataOnly: false}"
-                  options="optionsSunburstCompleteness"
-                  data="dataSunburstCompleteness"></nvd3>
+            <!-- end table -->
         </div>
     </div>
 </div>
