@@ -2,23 +2,68 @@
 <div ng-controller="showStpCompleteness">
 
     <!-- plot -->
-    <div ng-controller="stpPlotCtrl">
+    <div ng-controller="stpPlotCtrl" ng-show="$root.stpPlotReady">
         <div class="row">
-            <div><nvd3 options="optionStpXSharingY"
-                       data="dataStpXSharingY"></nvd3>
-            </div>
-            <div ng-show="$root.stpPlotReady" class="col-md-10">
-                <p id="timeExe"></p>
+
+            <div class="col-md-10">
+                <!-- <p id="timeExe"></p> -->
+
+                <!-- list of selected variables show/hide-->
+                <div class="pull-right">
+                    <p>Show/Hide related to the Plot</p>
+                    <!--<label>
+                         <input type="checkbox"
+                               ng-model="$root.gv.areStpAllShowCheckedCompleteness"
+                               ng-click="checkStpAllShowCompleteness()"> </input> All</label> -->
+
+                    <label class="btn-xs"
+                           ng-repeat="variable in $root.gv.tableCompleteness">
+                        <input type="checkbox"
+                               class="well-xs"
+                               ng-model="variable.Show"
+                               ng-click="$root.$broadcast('showCompletenessTableVariable')"> </input> {[{ variable.variable}]}</label>
+                    <a role="button" ng-click="resetStpAllShowCompleteness()" class="btn-xs pull-right">Reset</a>
+
+                    <label>
+                        <input type="checkbox"
+                               class="well-xs"
+                            ng-model="addVarToPlot"
+                            ng-click="$root.$broadcast('addTableVariablesToPlot')"> </input>Show/Hide in Plot</label>
+                </div>
+                <!-- -->
+
                 <nvd3 options="optionStpPlot"
                       data="dataStpPlot"
                       api="api"
                       config="{deepWatchDataDepth: 0, refreshDataOnly: true}"></nvd3>
             </div>
+
         </div>
-        <div><nvd3 options="optionStpYSharingX"
-                       data="dataStpYSharingX"></nvd3>
+        <!-- left --> <!--
+            <div ng-repeat="variable in $root.gv.tableCompleteness" ng-if="variable.variable != $root.gv.stpY" class="pull-left">
+                <div ng-show="variable.Show">
+                    <div><h6>{[{ variable.variable }]}</h6>
+                        <div ng-repeat="item in listDataVariables">
+                                {[{item.$options}]}
+                                <nvd3 options="item.optionSharingY" data="item.dataSharingY"></nvd3>
+                            </div>
+                    </div>
+                </div>
+            </div> -->
+            <!-- end left-->
+        <div class="row" class="col-md-10">
+            <div ng-repeat="variable in $root.gv.tableCompleteness" ng-if="variable.variable != $root.gv.stpX">
+                <div ng-show="variable.Show">
+                    <div><h6>{[{ variable.variable }]}</h6>
+                        <div ng-repeat="item in listDataVariables">
+                                {[{item.$options}]}
+                                <nvd3 options="item.optionSharingX" data="item.dataSharingX"></nvd3>
+                            </div>
+                    </div>
+                </div>
             </div>
-        <div ng-show="stpPlotReady"><br /><hr /></div>
+            <div ng-show="stpPlotReady"><br /><hr /></div>
+        </div>
     </div>
     <!-- end plot -->
 

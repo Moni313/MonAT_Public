@@ -84,6 +84,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                 stpY: [],
                 stpAll: [],
                 areStpAllChecked: false,
+                areStpAllShowCheckedCompleteness: false,
                 chartStpVars : 0,
 
                 //Plot then Select
@@ -96,7 +97,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             };
 
             angular.forEach(variables, function(v){
-                $rootScope.vars.push({Name: v, Selected: false});
+                $rootScope.vars.push({Name: v, Selected: false, Show: false});
                 $rootScope.gv.varsCompleteness.push(
                     {Name: v, Selected: false, countVarMissing: 0, countVarPresent: 0, min: 0, max: 0, mean: 0}
                 );
@@ -112,20 +113,20 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
     .controller('xCtrl', ['$scope', '$rootScope',  function($scope, $rootScope){
         $scope.$on('resetVarX', function(){
             $rootScope.gv.stpX = "";
-            $rootScope.gv.stpPlotReady = false;
+            $rootScope.stpPlotReady = false;
         });
     }])
     .controller('yCtrl', ['$scope', '$rootScope', function($scope, $rootScope){
         $scope.$on('resetVarY', function(){
             $rootScope.gv.stpY = "";
-            $rootScope.gv.stpPlotReady = false;
+            $rootScope.stpPlotReady = false;
         });
     }])
     .controller('allVarsCtrl', ['$scope', '$rootScope', function($scope, $rootScope){
 
         //start function completeness
         $scope.checkStpAllCompleteness = function () {
-            $rootScope.gv.areStpAllCheckedCompleteness = !$rootScope.gv.areStpAllCheckedCompleteness;
+            $rootScope.gv.areStpAllCheckedCompleteness = !!$rootScope.gv.areStpAllCheckedCompleteness;
             angular.forEach($rootScope.gv.varsCompleteness, function (item) {
                 item.Selected = $rootScope.gv.areStpAllCheckedCompleteness;
             });
@@ -139,6 +140,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $rootScope.gv.chartStpVars = 0;
             $rootScope.gv.tableCompleteness = [];
             $rootScope.gv.inDeptContent = [];
+            $rootScope.gv.stpX = "";
+            $rootScope.gv.stpY = "";
+            $rootScope.stpPlotReady = false;
         };
         //end functions completeness
 
@@ -167,8 +171,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
     .controller('stpPlotCtrl', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log){
 
         $rootScope.stpPlotReady = false;
+        $scope.addVarToPlot = false;
 
-        $scope.$on('refreshPlot', function(){
+        $scope.$on('refreshPlot', function() {
             $rootScope.stpPlotReady = true;
 
             var title = $rootScope.gv.stpX.concat(" vs ").concat($rootScope.gv.stpY);
@@ -226,106 +231,110 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $scope.api.update();
 
             var now2 = new Date();
-            var tTime = now2-now1;
-            document.getElementById("timeExe").textContent = tTime.toString();
+            var tTime = now2 - now1;
+            //document.getElementById("timeExe").textContent = tTime.toString();
 
-            /**
-             * nvd3 option for missing values y sharing X (historical bar chart)
-             * @type JSON
-             */
-            $scope.optionStpYSharingX = {
-                    chart: {
-                        type: 'historicalBarChart',
-                        height: 450,
-                        margin: {
-                            top: 20,
-                            right: 20,
-                            bottom: 65,
-                            left: 50
-                        },
-                        x: function (d) {
-                            return d[0];
-                        },
-                        y: function (d) {
-                            return d[1] / 100000;
-                        },
-                        showValues: true,
-                        valueFormat: function (d) {
-                            return d3.format(',.1f')(d);
-                        },
-                        duration: 100,
-                        xAxis: {
-                            axisLabel: $rootScope.gv.stpX,
-                            tickFormat: function (d) {
-                                return d3.time.format('%x')(new Date(d))
-                            },
-                            rotateLabels: 30,
-                            showMaxMin: false
-                        },
-                        yAxis: {
-                            axisLabel: $rootScope.gv.stpY,
-                            axisLabelDistance: -10,
-                            tickFormat: function (d) {
-                                return d3.format(',.1f')(d);
-                            }
-                        },
-                        tooltip: {
-                            keyFormatter: function (d) {
-                                return d3.time.format('%x')(new Date(d));
-                            }
-                        },
-                        zoom: {
-                            enabled: false,
-                            //scaleExtent: [1, 10],
-                            useFixedDomain: false,
-                            useNiceScale: true,
-                            horizontalOff: false,
-                            verticalOff: true,
-                            //unzoomEventType: 'dblclick.zoom'
-                        }
-                    }
-                };
-            $scope.dataStpYSharingX = completenessOfVariableRespectX($rootScope.gv.stpY, $rootScope.gv.stpX);
+            ///**
+            // * nvd3 option for missing values y sharing X (historical bar chart)
+            // * @type JSON
+            // */
+            //$scope.optionStpYSharingX = {
+            //    chart: {
+            //        type: 'historicalBarChart',
+            //        height: 450,
+            //        margin: {
+            //            top: 20,
+            //            right: 20,
+            //            bottom: 65,
+            //            left: 50
+            //        },
+            //        x: function (d) {
+            //            return d[0];
+            //        },
+            //        y: function (d) {
+            //            //return d[1] / 100000;
+            //            return d[1]
+            //        },
+            //        showValues: true,
+            //        valueFormat: function (d) {
+            //            return d3.format(',.1f')(d);
+            //        },
+            //        duration: 100,
+            //        xAxis: {
+            //            axisLabel: $rootScope.gv.stpX,
+            //            tickFormat: function (d) {
+            //                return d3.time.format('%x')(new Date(d))
+            //            },
+            //            rotateLabels: 30,
+            //            showMaxMin: false
+            //        },
+            //        yAxis: {
+            //            axisLabel: $rootScope.gv.stpY,
+            //            axisLabelDistance: -10,
+            //            tickFormat: function (d) {
+            //                return d3.format(',.1f')(d);
+            //            }
+            //        },
+            //        tooltip: {
+            //            keyFormatter: function (d) {
+            //                return d3.time.format('%x')(new Date(d));
+            //            }
+            //        },
+            //        zoom: {
+            //            enabled: false,
+            //            //scaleExtent: [1, 10],
+            //            useFixedDomain: false,
+            //            useNiceScale: true,
+            //            horizontalOff: false,
+            //            verticalOff: true,
+            //            //unzoomEventType: 'dblclick.zoom'
+            //        }
+            //    }
+            //};
+            //$scope.dataStpYSharingX = completenessOfVariableRespectX($rootScope.gv.stpY, $rootScope.gv.stpX);
+            //
+            ///**
+            // * nvd3 option for missing values x sharing Y (horizontal bar chart)
+            // * @type JSON
+            // */
+            //$scope.optionStpXSharingY = {
+            //    chart: {
+            //        type: 'multiBarHorizontalChart',
+            //        height: 200,
+            //        width: 400,
+            //        color: d3.scale.category10().range(),
+            //        x: function (d) {
+            //            return d.label;
+            //        },
+            //        y: function (d) {
+            //            return d.value;
+            //        },
+            //        showControls: true,
+            //        showValues: true,
+            //        duration: 500,
+            //        xAxis: {showMaxMin: false},
+            //        yAxis: {
+            //            axisLabel: 'Values',
+            //            tickFormat: function (d) {
+            //                return d3.format(',.0f')(d);
+            //            }
+            //        },
+            //        multibar: {
+            //            stacked: false
+            //        }
+            //    },
+            //    title: {
+            //        enable: true,
+            //        text: title,
+            //        className: "h5"
+            //    }
+            //};
+            //$scope.dataStpXSharingY = completenessOfVariableRespectY($rootScope.gv.stpX, $rootScope.gv.stpY);
 
-            /**
-             * nvd3 option for missing values x sharing Y (horizontal bar chart)
-             * @type JSON
-             */
-            $scope.optionStpXSharingY = {
-                    chart: {
-                        type: 'multiBarHorizontalChart',
-                        height: 200,
-                        width: 400,
-                        color: d3.scale.category10().range(),
-                        x: function (d) {
-                            return d.label;
-                        },
-                        y: function (d) {
-                            return d.value;
-                        },
-                        showControls: true,
-                        showValues: true,
-                        duration: 500,
-                        xAxis: {showMaxMin: false},
-                        yAxis: {
-                            axisLabel: 'Values',
-                            tickFormat: function (d) {
-                                return d3.format(',.0f')(d);
-                            }
-                        },
-                        multibar: {
-                            stacked: false
-                        }
-                    },
-                    title: {
-                        enable: true,
-                        text: title,
-                        className: "h5"
-                    }
-                };
-            $scope.dataStpXSharingY = completenessOfVariableRespectY($rootScope.gv.stpX, $rootScope.gv.stpY);
+        });
 
 
+        $scope.$on('showCompletenessTableVariable', function() {
 
             /**
              * for each variable in the tableCompleteness it creates dynamically options and data (for missingness)
@@ -333,319 +342,404 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
              */
             $scope.listDataVariables = [];
 
-            angular.forEach($rootScope.gv.tableCompleteness, function(variable){
-               // $log.debug("Variable: ", variable.variable);
+            angular.forEach($rootScope.gv.tableCompleteness, function (variable) {
+                //$log.debug("Show variable? ", variable.Show);
+                if(variable.Show) {
+                    //$log.debug("Variable: ", variable.variable);
 
-                //historical bar chart, sharing x
-                var optionSharingX = {
-                    chart: {
-                        type: 'historicalBarChart',
-                        height: 450,
-                        margin: {
-                            top: 20,
-                            right: 20,
-                            bottom: 65,
-                            left: 50
-                        },
-                        x: function (d) {
-                            return d[0];
-                        },
-                        y: function (d) {
-                            return d[1] / 100000;
-                        },
-                        showValues: true,
-                        valueFormat: function (d) {
-                            return d3.format(',.1f')(d);
-                        },
-                        duration: 100,
-                        xAxis: {
-                            axisLabel: 'X Axis',
-                            tickFormat: function (d) {
-                                return d3.time.format('%x')(new Date(d))
+                    //historical bar chart, sharing x
+                    var optionSharingX = {
+                        chart: {
+                            type: 'historicalBarChart',
+                            height: 450,
+                            margin: {
+                                top: 20,
+                                right: 20,
+                                bottom: 65,
+                                left: 50
                             },
-                            rotateLabels: 30,
-                            showMaxMin: false
-                        },
-                        yAxis: {
-                            axisLabel: 'Y Axis',
-                            axisLabelDistance: -10,
-                            tickFormat: function (d) {
-                                return d3.format(',.1f')(d);
-                            }
-                        },
-                        tooltip: {
-                            keyFormatter: function (d) {
-                                return d3.time.format('%x')(new Date(d));
-                            }
-                        },
-                        zoom: {
-                            enabled: true,
-                            scaleExtent: [1, 10],
-                            useFixedDomain: false,
-                            useNiceScale: false,
-                            horizontalOff: false,
-                            verticalOff: true,
-                            unzoomEventType: 'dblclick.zoom'
-                        }
-                    }
-                };
-
-                //horizontal bar chart, sharing y
-                var optionSharingY = {
-                    chart: {
-                        type: 'multiBarHorizontalChart',
-                        height: 200,
-                        width: 400,
-                        color: d3.scale.category10().range(),
-                        x: function (d) {
-                            return d.label;
-                        },
-                        y: function (d) {
-                            return d.value;
-                        },
-                        showControls: true,
-                        showValues: true,
-                        duration: 500,
-                        xAxis: {showMaxMin: false},
-                        yAxis: {
-                            axisLabel: 'Values',
-                            tickFormat: function (d) {
+                            x: function (d) {
+                                return d[0];
+                            },
+                            y: function (d) {
+                                //return d[1] / 100000;
+                                return d[1]
+                            },
+                            showValues: true,
+                            valueFormat: function (d) {
                                 return d3.format(',.0f')(d);
+                            },
+                            duration: 100,
+                            xAxis: {
+                                axisLabel: $rootScope.gv.stpX,
+                                tickFormat: function (d) {
+                                    return d
+                                    //return d3.time.format('%x')(new Date(d))
+                                },
+                                rotateLabels: 30,
+                                showMaxMin: false
+                            },
+                            yAxis: {
+                                axisLabel: '# of missing',
+                                axisLabelDistance: -10,
+                                tickFormat: function (d) {
+                                    return d3.format(',.0f')(d);
+                                }
+                            },
+                            tooltip: {
+                                keyFormatter: function (d) {
+                                    //$log.debug(d);
+                                    return "(".concat(variable.variable).concat(", # missing): ").concat(d);
+                                    //return d3.time.format('%x')(new Date(d));
+                                }
+                            },
+                            zoom: {
+                                enabled: true,
+                                scaleExtent: [1, 10],
+                                useFixedDomain: false,
+                                useNiceScale: false,
+                                horizontalOff: false,
+                                verticalOff: true,
+                                unzoomEventType: 'dblclick.zoom'
+                            }
+                        }
+                    };
+
+                    optionSharingX.chart.xDomain = $scope.optionStpPlot.chart.xDomain;
+
+
+                    //horizontal bar chart, sharing y
+                    var optionSharingY = {
+                        chart: {
+                            type: 'multiBarHorizontalChart',
+                            width: 200,
+                            color: d3.scale.category10().range(),
+                            x: function (d) {
+                                return d.label;
+                            },
+                            y: function (d) {
+                                return d.value;
+                            },
+                            showControls: true,
+                            showValues: true,
+                            duration: 500,
+                            xAxis: {showMaxMin: false},
+                            yAxis: {
+                                axisLabel: 'Values',
+                                tickFormat: function (d) {
+                                    return d3.format(',.0f')(d);
+                                }
+                            },
+                            multibar: {
+                                stacked: false
                             }
                         },
-                        multibar: {
-                            stacked: false
+                        title: {
+                            enable: true,
+                            text: variable.variable,
+                            className: "h5"
                         }
-                    },
-                    title: {
-                        enable: true,
-                        text: title,
-                        className: "h5"
-                    }
-                };
+                    };
 
+                    optionSharingY.chart.yDomain = $scope.optionStpPlot.chart.yDomain;
+                    optionSharingY.chart.height = $scope.optionStpPlot.chart.height;
 
-                var dataSharingX = completenessOfVariableRespectX(variable.variable, $rootScope.gv.stpX);
-                var dataSharingY = completenessOfVariableRespectY(variable.variable, $rootScope.gv.stpY);
+                    var dataSharingX = completenessOfVariableRespectX(variable.variable, $rootScope.gv.stpX);
+                    var dataSharingY = completenessOfVariableRespectY(variable.variable, $rootScope.gv.stpY);
 
-                $scope.listDataVariables.push(
-                    {key: variable,
-                        optionSharingX: optionSharingX,
-                        optionSharingY: optionSharingY,
-                        dataSharingX: dataSharingX,
-                        dataSharingY: dataSharingY
-                    }
-                );
-                //$scope.listDataVariables.optionSharingX.chart.xDomain = $scope.optionStpPlot.chart.xDomain;
+                    $scope.listDataVariables.push(
+                        {
+                            variable: variable,
+                            optionSharingX: optionSharingX,
+                            optionSharingY: optionSharingY,
+                            dataSharingX: dataSharingX,
+                            dataSharingY: dataSharingY
+                        }
+                    );
+                    //$scope.listDataVariables.optionSharingX.chart.xDomain = $scope.optionStpPlot.chart.xDomain;
 
-                //$scope.listDataVariables.optionSharingY.chart.yDomain = $scope.optionStpPlot.chart.yDomain;
-                $scope.listDataVariables.optionSharingY.chart.height = $scope.optionStpPlot.chart.height;
+                    //$scope.listDataVariables.optionSharingY.chart.yDomain = $scope.optionStpPlot.chart.yDomain;
+                    //$scope.listDataVariables.optionSharingY.chart.height = $scope.optionStpPlot.chart.height;
+                }
             });
-            $log.debug("list data variables\n",$scope.listDataVariables,"\n\n\n");
+            $log.debug("list data variables\n", $scope.listDataVariables, "\n\n\n");
+        });
 
 
-            /**
-             * data for historical bar chart (chart in the bottom of the plot, sharing x axis)
-             * @param variable that you want to count the missingness
-             * @param respectToVar variable in the x axis of the main plot
-             * @returns {*[]}
-             */
-            function completenessOfVariableRespectX(variable, respectToVar){
-                $log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
-                var data = completenessOfVariable(variable, respectToVar);
-                // $log.debug("data:\n", data);
-                // {"key":"Quantity" , "bar":true, "values": [[1136005200000, 1271000.0], [], []] }
-                var result = [{key: variable, bar: true, values:[]}];
-                angular.forEach(data, function(d){
-                    result[0].values.push([d.key, d.count]);
-                });
-                //$log.debug(result);
-                return result;
+        /**
+         * data for historical bar chart (chart in the bottom of the plot, sharing x axis)
+         * @param variable that you want to count the missingness
+         * @param respectToVar variable in the x axis of the main plot
+         * @returns {*[]}
+         */
+        function completenessOfVariableRespectX(variable, respectToVar){
+            //$log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
+            var data = completenessOfVariable(variable, respectToVar);
+            // $log.debug("data:\n", data);
+            // {"key":"Quantity" , "bar":true, "values": [[1136005200000, 1271000.0], [], []] }
+            var result = [{key: variable, bar: true, values:[]}];
+            angular.forEach(data, function(d){
+                result[0].values.push([d.key, d.count]);
+            });
+            //$log.debug(result);
+            return result;
+        }
+
+        /**
+         * data for horizontal bar chart (chart in the left sharing y axis)
+         * @param variable
+         * @param respectToVar variable in the y axis of the main plot
+         */
+        function completenessOfVariableRespectY(variable, respectToVar){
+            //$log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
+            var data = completenessOfVariable(variable, respectToVar);
+            // {key: 'Missing', values:[{label: variable, value: countMissing}]}
+            var result = [];
+            result.push({key: 'Missing', values:[]});
+            angular.forEach(data, function(d){
+                result[0].values.push(d.key, d.count);
+            });
+            return result;
+        }
+
+        /**
+         *
+         * @param variable
+         * @param respectToVar
+         * @returns {Array}
+         */
+        function completenessOfVariable(variable, respectToVar){
+            if(variable == respectToVar) return null;
+
+            //////////////////////////////////////////////////////
+            // set the content
+            var actualContent = [];
+            if($rootScope.gv.inDeptContent.length <= 0) {
+                //$log.debug("Looking over all records");
+                actualContent = $rootScope.content;
+            }
+            else {
+                //$log.debug("Looking in dept");
+                actualContent = $rootScope.gv.inDeptContent;
             }
 
-            /**
-             * data for horizontal bar chart (chart in the left sharing y axis)
-             * @param variable
-             * @param respectToVar variable in the y axis of the main plot
-             */
-            function completenessOfVariableRespectY(variable, respectToVar){
-                $log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
-                var data = completenessOfVariable(variable, respectToVar);
-                // {key: 'Missing', values:[{label: variable, value: countMissing}]}
-                var result = [];
-                result.push({key: 'Missing', values:[]});
-                angular.forEach(data, function(d){
-                    result[0].values.push(d.key, d.count);
-                });
-                return result;
-            }
+            ////////////////////////////////////////////////////
+            // initialising the result
+            var resultData = [];
+            angular.forEach(actualContent, function (entry) {
+                //$log.debug("adding: ", entry[respectToVar], " count: 0");
+                resultData.push({key: entry[respectToVar], count: 0})
+            });
 
-            /**
-             *
-             * @param variable
-             * @param respectToVar
-             * @returns {Array}
-             */
-            function completenessOfVariable(variable, respectToVar){
-                if(variable == respectToVar) return null;
 
+            //sorting
+            resultData.sort(function(a, b) {
+                return a.key - b.key;
+            });
+            //removing duplicate
+            var removeDuplicatesFromObjArray = function(arr, field) {
+                var u = [];
+                arr.reduce(function (a, b) {
+                    if (a[field] !== b[field]) u.push(b);
+                    return b;
+                }, []);
+                return u;
+            };
+            resultData = removeDuplicatesFromObjArray(resultData, "key");
+            //$log.debug(resultData);
+
+            angular.forEach(actualContent, function (entry) {
+                if(entry[variable]=== null
+                    || entry[variable] === ""
+                    || entry[variable] === "NaN"
+                    || entry[variable] === ''
+                    || entry[variable] === undefined){
+
+                    var actualKey = entry[respectToVar];
+                    angular.forEach(resultData, function(item){
+                        if(item.key == actualKey){
+                            item.count += 1;
+                        }
+                        //else{
+                        //    $log.debug("Skipping ", item.key);
+                        //}
+                    });
+                }
+            });
+            //$log.debug(resultData);
+            return resultData;
+        }
+
+        $scope.$on('addTableVariablesToPlot', function() {
+            $log.debug("add?", $scope.addVarToPlot);
+            if ($scope.addVarToPlot) {
                 //////////////////////////////////////////////////////
                 // set the content
                 var actualContent = [];
-                if($rootScope.gv.inDeptContent.length <= 0) {
-                    $log.debug("Looking over all records");
+                if ($rootScope.gv.inDeptContent.length <= 0) {
+                    //$log.debug("Looking over all records");
                     actualContent = $rootScope.content;
                 }
                 else {
-                    $log.debug("Looking in dept");
+                    //$log.debug("Looking in dept");
                     actualContent = $rootScope.gv.inDeptContent;
                 }
 
-                ////////////////////////////////////////////////////
-                // initialising the result
-                var resultData = [];
-                angular.forEach(actualContent, function (entry) {
-                    //$log.debug("adding: ", entry[respectToVar], " count: 0");
-                    resultData.push({key: entry[respectToVar], count: 0})
-                });
-
-
-                //sorting
-                resultData.sort(function(a, b) {
-                    return a.key - b.key;
-                });
-                //removing duplicate
-                var removeDuplicatesFromObjArray = function(arr, field) {
-                    var u = [];
-                    arr.reduce(function (a, b) {
-                        if (a[field] !== b[field]) u.push(b);
-                        return b;
-                    }, []);
-                    return u;
-                };
-                resultData = removeDuplicatesFromObjArray(resultData, "key");
-                //$log.debug(resultData);
-
-                angular.forEach(actualContent, function (entry) {
-                    if(entry[variable]=== null
-                        || entry[variable] === ""
-                        || entry[variable] === "NaN"
-                        || entry[variable] === ''
-                        || entry[variable] === undefined){
-
-                        var actualKey = entry[respectToVar];
-                        angular.forEach(resultData, function(item){
-                            if(item.key == actualKey){
-                                item.count += 1;
+                angular.forEach($rootScope.gv.tableCompleteness, function (item) {
+                    $log.debug("variable? ", item.Show);
+                    if (item.Show) {
+                        angular.forEach(actualContent, function (entry) {
+                            //TODO review the conditions: x and y have to be defined
+                            if ((entry[$rootScope.gv.stpX] !== null
+                                && entry[$rootScope.gv.stpX] !== ""
+                                && entry[$rootScope.gv.stpX] !== "NaN"
+                                && entry[$rootScope.gv.stpX] !== ''
+                                && entry[$rootScope.gv.stpX] !== undefined)
+                                &&
+                                (entry[$rootScope.gv.stpY] !== null
+                                && entry[$rootScope.gv.stpY] !== ""
+                                && entry[$rootScope.gv.stpY] !== "NaN"
+                                && entry[$rootScope.gv.stpY] !== ''
+                                && entry[$rootScope.gv.stpY] !== undefined)
+                                &&
+                                (entry[item.variable] === null
+                                    || entry[item.variable] === ""
+                                    || entry[item.variable] === "NaN"
+                                    || entry[item.variable] === ''
+                                    || entry[item.variable] === undefined)) {
+                                $log.debug();
+                                $scope.dataStpPlot[1].values.push(
+                                    {
+                                        x: entry[$rootScope.gv.stpX],
+                                        y: entry[$rootScope.gv.stpY],
+                                        size: 0.3,
+                                        shape: 'diamond',
+                                        color: "orange"
+                                    }
+                                )
                             }
-                            //else{
-                            //    $log.debug("Skipping ", item.key);
-                            //}
+
                         });
                     }
                 });
-                //$log.debug(resultData);
-                return resultData;
+                $log.debug(JSON.stringify($scope.dataStpPlot));
+                $rootScope.$broadcast("refreshPlot");
             }
+            else{
+                $scope.$apply(function(){
+                    $scope.dataStpPlot = settingData();
+                });
+            }
+        });
 
-            /**
-             *
-             * @returns {Array}
-             */
-            function settingData() {
-                var data = [];
-                var shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'];
-                data.push({key: 'Present', values: []});
-                data.push({key: 'Missing', values: []});
-                var size = 0.1;
+        /**
+         *
+         * @returns {Array}
+         */
+        function settingData() {
+            var data = [];
+            var shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'];
+            data.push({key: 'Present', values: []});
+            data.push({key: 'Missing', values: []});
+            var size = 0.1;
 
 
-                // TODO take only 100 data points
-                //var keepGoing = true;
-                //var i = 0;
+            // TODO take only 100 data points
+            //var keepGoing = true;
+            //var i = 0;
 
-                var actualContent = [];
-                if($rootScope.gv.inDeptContent.length <= 0) {
-                    actualContent = $rootScope.content;
+            var actualContent = [];
+            if($rootScope.gv.inDeptContent.length <= 0) {
+                actualContent = $rootScope.content;
+            }
+            else actualContent = $rootScope.gv.inDeptContent;
+
+            $scope.optionStpPlot.chart.xDomain = getRange(actualContent, $rootScope.gv.stpX);
+            $scope.optionStpPlot.chart.yDomain = getRange(actualContent, $rootScope.gv.stpY);
+
+
+
+            angular.forEach(actualContent, function (entry) {
+                //  if (keepGoing) {
+                // TODO make an array with missing for the charts
+                if (entry[$rootScope.gv.stpX] === null
+                    || entry[$rootScope.gv.stpX] === ""
+                    || entry[$rootScope.gv.stpX] === "NaN"
+                    || entry[$rootScope.gv.stpX] === ''
+                    || entry[$rootScope.gv.stpX] === undefined) {
+                    // TODO array for horizontal bar chart
                 }
-                else actualContent = $rootScope.gv.inDeptContent;
-
-                $scope.optionStpPlot.chart.xDomain = getRange(actualContent, $rootScope.gv.stpX);
-                $scope.optionStpPlot.chart.yDomain = getRange(actualContent, $rootScope.gv.stpY);
-
-
-
-                angular.forEach(actualContent, function (entry) {
-                    //  if (keepGoing) {
-                    // TODO make an array with missing for the charts
-                    if (entry[$rootScope.gv.stpX] === null
-                        || entry[$rootScope.gv.stpX] === ""
-                        || entry[$rootScope.gv.stpX] === "NaN"
-                        || entry[$rootScope.gv.stpX] === ''
-                        || entry[$rootScope.gv.stpX] === undefined) {
-                        // TODO array for horizontal bar chart
-                    }
-                    else if (entry[$rootScope.gv.stpY] === null
-                        || entry[$rootScope.gv.stpY] === ""
-                        || entry[$rootScope.gv.stpY] === ''
-                        || entry[$rootScope.gv.stpY] === "NaN"
-                        || entry[$rootScope.gv.stpY] === undefined) {
-                        // TODO array for the bottom bar chart
-                    }
-                    else {
-                        //x and y have values
-                        data[0].values.push(
-                            {
-                                x: entry[$rootScope.gv.stpX],
-                                y: entry[$rootScope.gv.stpY],
-                                size: size,
-                                shape: shapes[0]
-                            }
-                        );
-                    }
-                    //TODO delete to evaluate all the entries
-                    // i = i + 1;
-                    // if (i == 50000) {
-                    //    console.log("i == ", i);
-                    //   keepGoing = false;
-                    //}
-                    //}
-                });
-
-                return data;
-            }
-
-            /**
-             *
-             * @param content dataset to loop on
-             * @param variable that you want to calculate min and max
-             * @returns {*[]} min and max of the variable
-             */
-            function getRange(content, variable) {
-                var min = 0;
-                var max = 0;
-                angular.forEach(content, function (entry) {
-                    if (entry[variable] === null
-                        || entry[variable] === ""
-                        || entry[variable] === "NaN"
-                        || entry[variable] === ''
-                        || entry[variable] === undefined) {
-                    }
-                    else {
-                        if (parseFloat(entry[variable]) < min) min = parseFloat(entry[variable]);
-                        else if (parseFloat(entry[variable]) > max) {
-                            //console.log("variable: ", variable, ", actual max: ", max, "entry[variable]", entry[variable]);
-                            max = parseFloat(entry[variable]);
+                else if (entry[$rootScope.gv.stpY] === null
+                    || entry[$rootScope.gv.stpY] === ""
+                    || entry[$rootScope.gv.stpY] === ''
+                    || entry[$rootScope.gv.stpY] === "NaN"
+                    || entry[$rootScope.gv.stpY] === undefined) {
+                    // TODO array for the bottom bar chart
+                }
+                else {
+                    //x and y have values
+                    data[0].values.push(
+                        {
+                            x: entry[$rootScope.gv.stpX],
+                            y: entry[$rootScope.gv.stpY],
+                            size: size,
+                            shape: shapes[0]
                         }
+                    );
+                }
+                //TODO delete to evaluate all the entries
+                // i = i + 1;
+                // if (i == 50000) {
+                //    console.log("i == ", i);
+                //   keepGoing = false;
+                //}
+                //}
+            });
+
+            return data;
+        }
+
+        /**
+         *
+         * @param content dataset to loop on
+         * @param variable that you want to calculate min and max
+         * @returns {*[]} min and max of the variable
+         */
+        function getRange(content, variable) {
+            var min = 0;
+            var max = 0;
+            angular.forEach(content, function (entry) {
+                if (entry[variable] === null
+                    || entry[variable] === ""
+                    || entry[variable] === "NaN"
+                    || entry[variable] === ''
+                    || entry[variable] === undefined) {
+                }
+                else {
+                    //$log.debug("variable  ", variable, ": ", entry[variable]);
+                    if (parseFloat(entry[variable]) < min) min = parseFloat(entry[variable]);
+                    else if (parseFloat(entry[variable]) > max) {
+                        max = parseFloat(entry[variable]);
+                        //$log.debug("new max for  ", variable, ": ", max);
                     }
-                });
-                console.log("Range of ", variable, ": [", min, ", ", max, "]");
-                return [min, max];
-            }
-        })
+                }
+            });
+            //$log.debug("Range of ", variable, ": [", min, ", ", max, "]");
+            return [min, max];
+        }
 
+        $scope.checkStpAllShowCompleteness = function(){
+            $rootScope.gv.areStpAllShowCheckedCompleteness = !!$rootScope.gv.areStpAllShowCheckedCompleteness;
+            angular.forEach($rootScope.gv.tableCompleteness, function (item) {
+                item.Show = $rootScope.gv.areStpAllShowCheckedCompleteness;
+            });
+        }
 
-
+        $scope.resetStpAllShowCompleteness = function(){
+            angular.forEach($rootScope.gv.tableCompleteness, function (item) {
+                item.Show = false;
+            });
+        }
 
     }])
 
@@ -789,6 +883,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     table.meanV = sum / countPresent;
                     table.maxV = max;
                     table.records = $rootScope.content.length;
+                    table.Show = false;
 
                     tableCompleteness.push(table);
                 }
@@ -1034,6 +1129,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     table.meanV = vars.count / vars.countVarPresent;
                     table.maxV = vars.max;
                     table.records = actualContent.length;
+                    table.Show = false;
 
                     $rootScope.gv.tableCompleteness.push(table);
 
@@ -1207,6 +1303,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     table.meanV = sum / countPresent;
                     table.maxV = max;
                     table.records = $rootScope.content.length;
+                    table.Show = false;
 
                     $rootScope.gv.tableCompleteness.push(table);
 
