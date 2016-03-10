@@ -18,10 +18,16 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $scope.$broadcast('ptsChart');
             $scope.$broadcast('stpChart');
         });
-        $rootScope.firstRun = false;
 
+        //Global variables
+        $rootScope.firstRun = false;
         $rootScope.stpPlotReady = false;
-        //$log.debug($rootScope.stpPlotReady);
+
+        $rootScope.color = {
+            present: "#d7b5d8", // "#9ecae1", // "#a1dab4", //"#d7b5d8",
+            missing: "#980043" // "#3182bd" //"#253494" //"#980043"
+        };
+        $rootScope.marker = {}
     }])
 
     .controller('RevisionCtrl', function($scope, $log){
@@ -173,6 +179,223 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         $rootScope.stpPlotReady = false;
         $scope.addVarToPlot = false;
 
+
+
+        /**
+         * data for historical bar chart (chart in the bottom of the plot, sharing x axis)
+         * @param variable that you want to count the missingness
+         * @param respectToVar variable in the x axis of the main plot
+         * @returns {*[]}
+         */
+        function completenessOfVariableRespectX(variable, respectToVar){
+            //$log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
+            var data = completenessOfVariable(variable, respectToVar);
+            // $log.debug("data:\n", data);
+            // {"key":"Quantity" , "bar":true, "values": [[1136005200000, 1271000.0], [], []] }
+            var result = [{key: variable, bar: true, color: $rootScope.color.missing, values:[]}];
+            angular.forEach(data, function(d){
+                result[0].values.push([d.key, d.count]);
+            });
+            //$log.debug(result);
+            return result;
+        }
+
+        /**
+         * data for horizontal bar chart (chart in the left sharing y axis)
+         * @param variable
+         * @param respectToVar variable in the y axis of the main plot
+         */
+        function completenessOfVariableRespectY(variable, respectToVar){
+            //$log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
+            var data = completenessOfVariable(variable, respectToVar);
+            // {key: 'Missing', values:[{label: variable, value: countMissing}]}
+            var result = [];
+            result.push({key: 'Missing', values:[]});
+            angular.forEach(data, function(d){
+                result[0].values.push(d.key, d.count);
+            });
+            return result;
+        }
+
+        /**
+         *
+         * @param variable
+         * @param respectToVar
+         * @returns {Array}
+         */
+        function completenessOfVariable(variable, respectToVar){
+            if(variable == respectToVar) return null;
+
+            //////////////////////////////////////////////////////
+            // set the content
+            var actualContent = [];
+            if($rootScope.gv.inDeptContent.length <= 0) {
+                //$log.debug("Looking over all records");
+                actualContent = $rootScope.content;
+            }
+            else {
+                //$log.debug("Looking in dept");
+                actualContent = $rootScope.gv.inDeptContent;
+            }
+
+            ////////////////////////////////////////////////////
+            // initialising the result
+            var resultData = [];
+            angular.forEach(actualContent, function (entry) {
+                //$log.debug("adding: ", entry[respectToVar], " count: 0");
+                resultData.push({key: entry[respectToVar], count: 0})
+            });
+
+
+            //sorting
+            resultData.sort(function(a, b) {
+                return a.key - b.key;
+            });
+            //removing duplicate
+            var removeDuplicatesFromObjArray = function(arr, field) {
+                var u = [];
+                arr.reduce(function (a, b) {
+                    if (a[field] !== b[field]) u.push(b);
+                    return b;
+                }, []);
+                return u;
+            };
+            resultData = removeDuplicatesFromObjArray(resultData, "key");
+            //$log.debug(resultData);
+
+            angular.forEach(actualContent, function (entry) {
+                if(entry[variable]=== null
+                    || entry[variable] === ""
+                    || entry[variable] === "NaN"
+                    || entry[variable] === ''
+                    || entry[variable] === undefined){
+
+                    var actualKey = entry[respectToVar];
+                    angular.forEach(resultData, function(item){
+                        if(item.key == actualKey){
+                            item.count += 1;
+                        }
+                        //else{
+                        //    $log.debug("Skipping ", item.key);
+                        //}
+                    });
+                }
+            });
+            //$log.debug(resultData);
+            return resultData;
+        }
+
+        /**
+         *
+         * @returns {Array}
+         */
+        function settingData() {
+            var data = [];
+            var shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'];
+            data.push({key: 'Present', color: $rootScope.color.present, values: []});
+            data.push({key: 'Missing', color: $rootScope.color.missing, values: []});
+            var size = 0.1;
+
+
+            // TODO take only 100 data points
+            //var keepGoing = true;
+            //var i = 0;
+
+            var actualContent = [];
+            if($rootScope.gv.inDeptContent.length <= 0) {
+                actualContent = $rootScope.content;
+            }
+            else actualContent = $rootScope.gv.inDeptContent;
+
+            $scope.optionStpPlot.chart.xDomain = getRange(actualContent, $rootScope.gv.stpX);
+            $scope.optionStpPlot.chart.yDomain = getRange(actualContent, $rootScope.gv.stpY);
+
+
+
+            angular.forEach(actualContent, function (entry) {
+                //  if (keepGoing) {
+                // TODO make an array with missing for the charts
+                if (entry[$rootScope.gv.stpX] === null
+                    || entry[$rootScope.gv.stpX] === ""
+                    || entry[$rootScope.gv.stpX] === "NaN"
+                    || entry[$rootScope.gv.stpX] === ''
+                    || entry[$rootScope.gv.stpX] === undefined) {
+                    // TODO array for horizontal bar chart
+                }
+                else if (entry[$rootScope.gv.stpY] === null
+                    || entry[$rootScope.gv.stpY] === ""
+                    || entry[$rootScope.gv.stpY] === ''
+                    || entry[$rootScope.gv.stpY] === "NaN"
+                    || entry[$rootScope.gv.stpY] === undefined) {
+                    // TODO array for the bottom bar chart
+                }
+                else {
+                    //x and y have values
+                    data[0].values.push(
+                        {
+                            x: entry[$rootScope.gv.stpX],
+                            y: entry[$rootScope.gv.stpY],
+                            size: size,
+                            shape: shapes[0],
+                            color: $rootScope.color.present
+                        }
+                    );
+                }
+                //TODO delete to evaluate all the entries
+                // i = i + 1;
+                // if (i == 50000) {
+                //    console.log("i == ", i);
+                //   keepGoing = false;
+                //}
+                //}
+            });
+
+            return data;
+        }
+
+        /**
+         *
+         * @param content dataset to loop on
+         * @param variable that you want to calculate min and max
+         * @returns {*[]} min and max of the variable
+         */
+        function getRange(content, variable) {
+            var min = 0;
+            var max = 0;
+            angular.forEach(content, function (entry) {
+                if (entry[variable] === null
+                    || entry[variable] === ""
+                    || entry[variable] === "NaN"
+                    || entry[variable] === ''
+                    || entry[variable] === undefined) {
+                }
+                else {
+                    //$log.debug("variable  ", variable, ": ", entry[variable]);
+                    if (parseFloat(entry[variable]) < min) min = parseFloat(entry[variable]);
+                    else if (parseFloat(entry[variable]) > max) {
+                        max = parseFloat(entry[variable]);
+                        //$log.debug("new max for  ", variable, ": ", max);
+                    }
+                }
+            });
+            //$log.debug("Range of ", variable, ": [", min, ", ", max, "]");
+            return [min, max];
+        }
+
+        $scope.checkStpAllShowCompleteness = function(){
+            $rootScope.gv.areStpAllShowCheckedCompleteness = !!$rootScope.gv.areStpAllShowCheckedCompleteness;
+            angular.forEach($rootScope.gv.tableCompleteness, function (item) {
+                item.Show = $rootScope.gv.areStpAllShowCheckedCompleteness;
+            });
+        }
+
+        $scope.resetStpAllShowCompleteness = function(){
+            angular.forEach($rootScope.gv.tableCompleteness, function (item) {
+                item.Show = false;
+            });
+        }
+
+
         $scope.$on('refreshPlot', function() {
             $rootScope.stpPlotReady = true;
 
@@ -181,6 +404,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                 chart: {
                     type: 'scatterChart',
                     height: 450,
+                    //width: 600,
                     color: d3.scale.category10().range(),
                     scatter: {
                         onlyCircles: false
@@ -333,7 +557,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         });
 
-
         $scope.$on('showCompletenessTableVariable', function() {
 
             /**
@@ -351,7 +574,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     var optionSharingX = {
                         chart: {
                             type: 'historicalBarChart',
-                            height: 450,
+                            height: 150,
                             margin: {
                                 top: 20,
                                 right: 20,
@@ -406,6 +629,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     };
 
                     optionSharingX.chart.xDomain = $scope.optionStpPlot.chart.xDomain;
+                    //optionSharingX.chart.width = $scope.optionStpPlot.chart.width;
 
 
                     //horizontal bar chart, sharing y
@@ -465,111 +689,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $log.debug("list data variables\n", $scope.listDataVariables, "\n\n\n");
         });
 
-
-        /**
-         * data for historical bar chart (chart in the bottom of the plot, sharing x axis)
-         * @param variable that you want to count the missingness
-         * @param respectToVar variable in the x axis of the main plot
-         * @returns {*[]}
-         */
-        function completenessOfVariableRespectX(variable, respectToVar){
-            //$log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
-            var data = completenessOfVariable(variable, respectToVar);
-            // $log.debug("data:\n", data);
-            // {"key":"Quantity" , "bar":true, "values": [[1136005200000, 1271000.0], [], []] }
-            var result = [{key: variable, bar: true, values:[]}];
-            angular.forEach(data, function(d){
-                result[0].values.push([d.key, d.count]);
-            });
-            //$log.debug(result);
-            return result;
-        }
-
-        /**
-         * data for horizontal bar chart (chart in the left sharing y axis)
-         * @param variable
-         * @param respectToVar variable in the y axis of the main plot
-         */
-        function completenessOfVariableRespectY(variable, respectToVar){
-            //$log.debug("Calculating completeness for ", variable, " respect to ", respectToVar);
-            var data = completenessOfVariable(variable, respectToVar);
-            // {key: 'Missing', values:[{label: variable, value: countMissing}]}
-            var result = [];
-            result.push({key: 'Missing', values:[]});
-            angular.forEach(data, function(d){
-                result[0].values.push(d.key, d.count);
-            });
-            return result;
-        }
-
-        /**
-         *
-         * @param variable
-         * @param respectToVar
-         * @returns {Array}
-         */
-        function completenessOfVariable(variable, respectToVar){
-            if(variable == respectToVar) return null;
-
-            //////////////////////////////////////////////////////
-            // set the content
-            var actualContent = [];
-            if($rootScope.gv.inDeptContent.length <= 0) {
-                //$log.debug("Looking over all records");
-                actualContent = $rootScope.content;
-            }
-            else {
-                //$log.debug("Looking in dept");
-                actualContent = $rootScope.gv.inDeptContent;
-            }
-
-            ////////////////////////////////////////////////////
-            // initialising the result
-            var resultData = [];
-            angular.forEach(actualContent, function (entry) {
-                //$log.debug("adding: ", entry[respectToVar], " count: 0");
-                resultData.push({key: entry[respectToVar], count: 0})
-            });
-
-
-            //sorting
-            resultData.sort(function(a, b) {
-                return a.key - b.key;
-            });
-            //removing duplicate
-            var removeDuplicatesFromObjArray = function(arr, field) {
-                var u = [];
-                arr.reduce(function (a, b) {
-                    if (a[field] !== b[field]) u.push(b);
-                    return b;
-                }, []);
-                return u;
-            };
-            resultData = removeDuplicatesFromObjArray(resultData, "key");
-            //$log.debug(resultData);
-
-            angular.forEach(actualContent, function (entry) {
-                if(entry[variable]=== null
-                    || entry[variable] === ""
-                    || entry[variable] === "NaN"
-                    || entry[variable] === ''
-                    || entry[variable] === undefined){
-
-                    var actualKey = entry[respectToVar];
-                    angular.forEach(resultData, function(item){
-                        if(item.key == actualKey){
-                            item.count += 1;
-                        }
-                        //else{
-                        //    $log.debug("Skipping ", item.key);
-                        //}
-                    });
-                }
-            });
-            //$log.debug(resultData);
-            return resultData;
-        }
-
         $scope.$on('addTableVariablesToPlot', function() {
             $log.debug("add?", $scope.addVarToPlot);
             if ($scope.addVarToPlot) {
@@ -614,7 +733,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                                         y: entry[$rootScope.gv.stpY],
                                         size: 0.3,
                                         shape: 'diamond',
-                                        color: "orange"
+                                        color: $rootScope.color.missing
                                     }
                                 )
                             }
@@ -631,115 +750,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                 });
             }
         });
-
-        /**
-         *
-         * @returns {Array}
-         */
-        function settingData() {
-            var data = [];
-            var shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'];
-            data.push({key: 'Present', values: []});
-            data.push({key: 'Missing', values: []});
-            var size = 0.1;
-
-
-            // TODO take only 100 data points
-            //var keepGoing = true;
-            //var i = 0;
-
-            var actualContent = [];
-            if($rootScope.gv.inDeptContent.length <= 0) {
-                actualContent = $rootScope.content;
-            }
-            else actualContent = $rootScope.gv.inDeptContent;
-
-            $scope.optionStpPlot.chart.xDomain = getRange(actualContent, $rootScope.gv.stpX);
-            $scope.optionStpPlot.chart.yDomain = getRange(actualContent, $rootScope.gv.stpY);
-
-
-
-            angular.forEach(actualContent, function (entry) {
-                //  if (keepGoing) {
-                // TODO make an array with missing for the charts
-                if (entry[$rootScope.gv.stpX] === null
-                    || entry[$rootScope.gv.stpX] === ""
-                    || entry[$rootScope.gv.stpX] === "NaN"
-                    || entry[$rootScope.gv.stpX] === ''
-                    || entry[$rootScope.gv.stpX] === undefined) {
-                    // TODO array for horizontal bar chart
-                }
-                else if (entry[$rootScope.gv.stpY] === null
-                    || entry[$rootScope.gv.stpY] === ""
-                    || entry[$rootScope.gv.stpY] === ''
-                    || entry[$rootScope.gv.stpY] === "NaN"
-                    || entry[$rootScope.gv.stpY] === undefined) {
-                    // TODO array for the bottom bar chart
-                }
-                else {
-                    //x and y have values
-                    data[0].values.push(
-                        {
-                            x: entry[$rootScope.gv.stpX],
-                            y: entry[$rootScope.gv.stpY],
-                            size: size,
-                            shape: shapes[0]
-                        }
-                    );
-                }
-                //TODO delete to evaluate all the entries
-                // i = i + 1;
-                // if (i == 50000) {
-                //    console.log("i == ", i);
-                //   keepGoing = false;
-                //}
-                //}
-            });
-
-            return data;
-        }
-
-        /**
-         *
-         * @param content dataset to loop on
-         * @param variable that you want to calculate min and max
-         * @returns {*[]} min and max of the variable
-         */
-        function getRange(content, variable) {
-            var min = 0;
-            var max = 0;
-            angular.forEach(content, function (entry) {
-                if (entry[variable] === null
-                    || entry[variable] === ""
-                    || entry[variable] === "NaN"
-                    || entry[variable] === ''
-                    || entry[variable] === undefined) {
-                }
-                else {
-                    //$log.debug("variable  ", variable, ": ", entry[variable]);
-                    if (parseFloat(entry[variable]) < min) min = parseFloat(entry[variable]);
-                    else if (parseFloat(entry[variable]) > max) {
-                        max = parseFloat(entry[variable]);
-                        //$log.debug("new max for  ", variable, ": ", max);
-                    }
-                }
-            });
-            //$log.debug("Range of ", variable, ": [", min, ", ", max, "]");
-            return [min, max];
-        }
-
-        $scope.checkStpAllShowCompleteness = function(){
-            $rootScope.gv.areStpAllShowCheckedCompleteness = !!$rootScope.gv.areStpAllShowCheckedCompleteness;
-            angular.forEach($rootScope.gv.tableCompleteness, function (item) {
-                item.Show = $rootScope.gv.areStpAllShowCheckedCompleteness;
-            });
-        }
-
-        $scope.resetStpAllShowCompleteness = function(){
-            angular.forEach($rootScope.gv.tableCompleteness, function (item) {
-                item.Show = false;
-            });
-        }
 
     }])
 
@@ -764,7 +774,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     type: 'multiBarHorizontalChart',
                     height: 500,
                     //width: 400,
-                    color: d3.scale.category10().range(),
+                    color:  d3.scale.category10().range(),
                     x: function (d) {
                         return d.label;
                     },
@@ -812,6 +822,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     className: "h5"
                 }
             };
+            $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
+
             $scope.optionsSunburstCompleteness = {
                 chart: {
                     type: 'sunburstChart',
@@ -824,9 +836,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     }
                 }
             };
-
-
-            $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
             $scope.dataSunburstCompleteness = sbc("");
 
             ////////////////////////////////////////////
@@ -893,10 +902,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         function mbhcc(){
             var presentMissing = [];
-            presentMissing.push({key: 'Present', values: []}); //presentMissing[0]
-            presentMissing.push({key: 'Missing', values: []}); //presentMissing[1]
+            presentMissing.push({key: 'Present', color: $rootScope.color.present, values: []}); //presentMissing[0]
+            presentMissing.push({key: 'Missing', color: $rootScope.color.missing, values: []}); //presentMissing[1]
             angular.forEach($rootScope.gv.tableCompleteness, function(variable) {
-                presentMissing[0].values.push({label: variable.variable, value: variable.present});
+                presentMissing[0].values.push({label: variable.variable, value: variable.present });
                 presentMissing[1].values.push({label: variable.variable, value: variable.missing});
             });
             return presentMissing;
@@ -906,24 +915,32 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         //i.e., keySunburst = "height_Missing" a selected variable of the horizontal multibarchart
         function sbc(keySunburst) {
 
-
             //create first ring of the sunburst
             if (keySunburst === "") {
                 $scope.dataSunburstCompleteness = [{
                     name: "Growth",
+                    color: "white",
                     children: [],
                     position: 0
                 }];
                 angular.forEach($rootScope.gv.tableCompleteness, function (entry) {
                     if (entry.present !== 0) {
                         $scope.dataSunburstCompleteness[0].children.push(
-                            {name: entry.variable.concat(" Present"), size: entry.present, position: $rootScope.gv.SunburstIndex}
+                            {name: entry.variable.concat(" Present"),
+                                size: entry.present,
+                                position: $rootScope.gv.SunburstIndex,
+                                color: $rootScope.color.present
+                            }
                         );
                     }
                     if (entry.missing !== 0) {
 
                         $scope.dataSunburstCompleteness[0].children.push(
-                            {name: entry.variable.concat(" Missing"), color: "orange", size: entry.missing, position: $rootScope.gv.SunburstIndex}
+                            {name: entry.variable.concat(" Missing"),
+                                size: entry.missing,
+                                position: $rootScope.gv.SunburstIndex,
+                                color: $rootScope.color.missing
+                            }
                         );
                     }
                 });
@@ -983,7 +1000,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                                                 {
                                                     name: entry.variable.concat(" Present"),
                                                     size: entry.present,
-                                                    position: $rootScope.gv.SunburstIndex+1
+                                                    position: $rootScope.gv.SunburstIndex+1,
+                                                    color: $rootScope.color.present
                                                 }
                                             );
                                             //$log.debug(
@@ -1003,9 +1021,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                                             child.children.push(
                                                 {
                                                     name: entry.variable.concat(" Missing"),
-                                                    color: "orange",
                                                     size: entry.missing,
-                                                    position: $rootScope.gv.SunburstIndex+1
+                                                    position: $rootScope.gv.SunburstIndex+1,
+                                                    color: $rootScope.color.missing
                                                 }
                                             );
                                             //$log.debug(
