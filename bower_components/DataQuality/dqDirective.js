@@ -29,6 +29,13 @@ angular.module('dqDirective', [])
         }
     })
 
+    .directive('ngTableCompleteness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/views/components/tableCompleteness.html"
+        }
+    })
+
     .directive('ngLeft', function(){
         return {
             restrict: 'E',

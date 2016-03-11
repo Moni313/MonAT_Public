@@ -1,0 +1,10 @@
+ <div ng-repeat="variable in $root.gv.tableCompleteness" ng-if="variable.variable != $root.gv.stpY" class="pull-left">
+    <div ng-show="variable.Show">
+        <div><h6>{[{ variable.variable }]}</h6>
+            <div ng-repeat="item in listDataVariables">
+                    {[{item.$options}]}
+                    <nvd3 options="item.optionSharingY" data="item.dataSharingY"></nvd3>
+                </div>
+        </div>
+    </div>
+</div>

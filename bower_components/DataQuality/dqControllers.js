@@ -23,10 +23,28 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         $rootScope.firstRun = false;
         $rootScope.stpPlotReady = false;
 
+
+        //http://colorbrewer2.org/
         $rootScope.color = {
-            present: "#d7b5d8", // "#9ecae1", // "#a1dab4", //"#d7b5d8",
-            missing: "#980043" // "#3182bd" //"#253494" //"#980043"
+            missing: "#d7b5d8", // "#9ecae1", // "#a1dab4", //"#d7b5d8",
+            present: "#980043" // "#3182bd" //"#253494" //"#980043"
         };
+
+        $rootScope.colorRange = {
+            //darker
+            missing: [
+                "#006d2c", "#810f7c", "#0868ac", "#b30000", "#016c59",
+                "#7a0177", "#253494", "#bd0026", "#2ca25f", "#8856a7",
+                "#43a2ca", "#dd1c77", "#2b8cbe", "#f03b20", "#1c9099"
+            ],
+            //lighter
+            present : [
+                "#66c2a4", "#8c96c6", "#7bccc4", "#fc8d59", "#67a9cf",
+                "#f768a1", "#41b6c4", "#fd8d3c", "#b2e2e2", "#b3cde3",
+                "#bae4bc", "#d7b5d8", "#bdc9e1", "#fecc5c", "#bdc9e1"
+            ]
+        };
+
         $rootScope.marker = {}
     }])
 
@@ -411,7 +429,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     },
                     showDistX: true,
                     showDistY: true,
-                    showLegend: false,
+                    showLegend: true,
                     //tooltipContent: function(d) {
                     //    return d.series && '<h3>' + d.series[0].key + '</h3>';
                     //},
@@ -421,7 +439,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                         axisLabel: $rootScope.gv.stpX,
                         tickFormat: function (d) {
                             return d3.format('.0f')(d);
-                        }
+                        },
+                        ticks: 8
                     },
                     yAxis: {
                         axisLabel: $rootScope.gv.stpY,
@@ -433,7 +452,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     zoom: {
                         //NOTE: All attributes below are optional
                         enabled: false,
-                        //scaleExtent: [1, 10],
+                        scaleExtent: [1, 10],
                         useFixedDomain: false,
                         useNiceScale: false,
                         horizontalOff: false,
@@ -575,11 +594,12 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                         chart: {
                             type: 'historicalBarChart',
                             height: 150,
+                            width: null,
                             margin: {
                                 top: 20,
-                                right: 20,
+                                //right: 20,
                                 bottom: 65,
-                                left: 50
+                                //left: 50
                             },
                             x: function (d) {
                                 return d[0];
@@ -596,11 +616,12 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                             xAxis: {
                                 axisLabel: $rootScope.gv.stpX,
                                 tickFormat: function (d) {
-                                    return d
+                                    return d3.format('.0f')(d);
                                     //return d3.time.format('%x')(new Date(d))
                                 },
+                                ticks: 8,
                                 rotateLabels: 30,
-                                showMaxMin: false
+                                showMaxMin: true
                             },
                             yAxis: {
                                 axisLabel: '# of missing',
@@ -629,8 +650,11 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     };
 
                     optionSharingX.chart.xDomain = $scope.optionStpPlot.chart.xDomain;
-                    //optionSharingX.chart.width = $scope.optionStpPlot.chart.width;
+                    optionSharingX.chart.width = $scope.optionStpPlot.chart.width;
+                    optionSharingX.chart.xAxis = $scope.optionStpPlot.chart.xAxis;
 
+
+                    optionSharingX.chart.zoom.enable = true;
 
                     //horizontal bar chart, sharing y
                     var optionSharingY = {
@@ -813,6 +837,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                                     //$log.debug("size of SunburstIndex: ", $rootScope.gv.SunburstIndex);
                                 });
                             }
+                        },
+
+                        valueFormat: function (d) {
+                            return d3.format(',.0f')(d);
                         }
                     }
                 },
@@ -822,6 +850,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     className: "h5"
                 }
             };
+
             $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
 
             $scope.optionsSunburstCompleteness = {
@@ -888,9 +917,21 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     table.variable = variable.Name;
                     table.missing = countMissing;
                     table.present = countPresent;
-                    table.minV = min;
-                    table.meanV = sum / countPresent;
-                    table.maxV = max;
+
+                    // categorical variables
+                    // $log.debug(typeof (sum/countPresent));
+                    //TODO review this inclusion ID and make it as requirement for the json file variables
+                    if(!variable.Name.includes('ID') && (sum/countPresent)) {
+                        table.minV = min.toFixed(2);
+                        table.meanV = (sum / countPresent).toFixed(2);
+                        table.maxV = max.toFixed(2);
+                    }
+                    // numerical variables
+                    else {
+                        table.minV = "";
+                        table.meanV = "";
+                        table.maxV = "";
+                    }
                     table.records = $rootScope.content.length;
                     table.Show = false;
 
@@ -1061,14 +1102,14 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             var newContent = [];
 
             //reset
-            angular.forEach($rootScope.gv.varsCompleteness, function(vars){
-                vars.countVarMissing = 0;
-                vars.countVarPresent = 0;
-                vars.min = 0;
-                vars.max = 0;
-                vars.mean = 0;
-                vars.count = 0;
-            });
+            //angular.forEach($rootScope.gv.varsCompleteness, function(vars){
+            //    vars.countVarMissing = 0;
+            //    vars.countVarPresent = 0;
+            //    vars.minV = 0;
+            //    vars.maxV = 0;
+            //    vars.meanV = 0;
+            //    vars.count = 0;
+            //});
 
             if(key === "Present"){
 
@@ -1143,9 +1184,21 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     table.variable = vars.Name;
                     table.missing = vars.countVarMissing;
                     table.present = vars.countVarPresent;
-                    table.minV = vars.min;
-                    table.meanV = vars.count / vars.countVarPresent;
-                    table.maxV = vars.max;
+                    // categorical variables
+                    // $log.debug(typeof (sum/countPresent));
+                    //TODO duplicated code
+                    //TODO review this inclusion ID and make it as requirement for the json file variables
+                    if(!vars.variable.includes('ID') && ((vars.count) / (vars.countVarPresent))) {
+                        table.minV = (vars.min).toFixed(2);
+                        table.meanV = ((vars.count) / (vars.countVarPresent)).toFixed(2);
+                        table.maxV = (vars.max).toFixed(2);
+                    }
+                    // numerical variables
+                    else {
+                        table.minV = "";
+                        table.meanV = "";
+                        table.maxV = "";
+                    }
                     table.records = actualContent.length;
                     table.Show = false;
 
@@ -1274,8 +1327,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         function calculateCompleteness() {
             $rootScope.gv.tableCompleteness = [];
             var presentMissing = [];
-            presentMissing.push({key: 'Present', values: []}); //presentMissing[0]
-            presentMissing.push({key: 'Missing', values: []}); //presentMissing[1]
+            presentMissing.push({key: 'Present', color: $rootScope.color.present, values: []}); //presentMissing[0]
+            presentMissing.push({key: 'Missing', color: $rootScope.color.missing, values: []}); //presentMissing[1]
             var countAllPresent = 0;
             var countAllMissing = 0;
             angular.forEach($rootScope.gv.varsCompleteness, function(variable){

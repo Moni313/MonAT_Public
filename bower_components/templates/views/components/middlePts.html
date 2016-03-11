@@ -4,28 +4,7 @@
         <nvd3 options="options" data="dataCompleteness" class="col-md-6 pull-left"></nvd3>
 
         <div class="col-md-6">
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <td>Variable</td>
-                        <td># record missing</td>
-                        <td># record present</td>
-                        <td># total records</td>
-                        <td>min</td>
-                        <td>mean</td>
-                        <td>max</td>
-                    </tr>
-                </thead>
-                <tr ng-repeat="row in $root.gv.tableCompleteness">
-                    <td>{[{row.variable}]}</td>
-                    <td>{[{row.missing}]}</td>
-                    <td>{[{row.present}]}</td>
-                    <td>{[{row.records}]}</td>
-                    <td>{[{row.minV}]}</td>
-                    <td>{[{row.meanV}]}</td>
-                    <td>{[{row.maxV}]}</td>
-                </tr>
-            </table>
+            <ng-table-completeness></ng-table-completeness>
         </div>
     </div>
 </div>
