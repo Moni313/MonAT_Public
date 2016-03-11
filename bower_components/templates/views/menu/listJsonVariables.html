@@ -1,0 +1,10 @@
+<label>
+    <input type="checkbox"
+           ng-model="$root.gv.areStpAllCheckedCompleteness"
+           ng-click="checkStpAllCompleteness()"> </input> All</label>
+<a role="button" ng-click="resetStpAllCompleteness()" class="btn-xs pull-right">Reset</a>
+<label class="btn-xs"
+       ng-repeat="variable in $root.gv.varsCompleteness">
+    <input type="checkbox"
+           class="well-xs"
+           ng-model="variable.Selected"> </input> {[{ variable.Name}]}</label>

@@ -18,73 +18,26 @@
 
         <div><a role="button" class="btn-xs" data-toggle="collapse" data-target="#stpCompleteness">Completeness</a>
             <div id="stpCompleteness" class="collapse in">
-            <label>
-                <input type="checkbox"
-                       ng-model="$root.gv.areStpAllCheckedCompleteness"
-                       ng-click="checkStpAllCompleteness()"> </input> All</label>
-            <a role="button" ng-click="resetStpAllCompleteness()" class="btn-xs pull-right">Reset</a>
-            <label class="btn-xs"
-                   ng-repeat="variable in $root.gv.varsCompleteness">
-                <input type="checkbox"
-                       class="well-xs"
-                       ng-model="variable.Selected"> </input> {[{ variable.Name}]}</label>
+                <ng-list-json-variables></ng-list-json-variables>
             </div>
         </div>
-
-
 
 
         <div>
             <a role="button" class="btn-xs" data-toggle="collapse" data-target="#stpDuplication"> Duplication</a>
             <div id="stpDuplication" class="collapse">
-            <label>
-                <input type="checkbox"
-                       ng-model="$root.gv.areStpAllCheckedDuplication"
-                       ng-click="checkStpAllDuplication()"> </input> All</label>
-            <a role="button" ng-click="resetStpAllDuplication()" class="btn-xs pull-right">Reset</a>
-            <label class=" btn-xs"
-                   ng-repeat="variable in $root.gv.varsDuplication">
-                <input type="checkbox"
-                       class="well-xs"
-                       ng-model="variable.Selected"> </input> {[{ variable.Name }]} </label>
             </div>
         </div>
+
     </div>
 
-    <div>
-        <button type="button" ng-click="$root.$broadcast('refresh')" class="btn btn-default btn-xs">Refresh</button>
-        <button type="button"
-                class="btn btn-default btn-xs"
-                ng-model="$root.gv.chartStpVars"
-                uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-            Show/Hide chart
-        </button>
-    </div>
+    <ng-refresh-chart-stp-vars></ng-refresh-chart-stp-vars>
 
     <hr />
 
-    <div ng-controller="xCtrl">
-        <label for="repeatSelectX">X: </label><a role="button" ng-click="$root.$broadcast('resetVarX')" class="btn-xs pull-right">Reset</a>
-        <select name="repeatSelectX" ng-model="$root.gv.stpX">
-        <option ng-repeat="variable in $root.vars">{[{variable.Name}]}</option>
-        </select>
-    </div>
+    <ng-x-selection-plot></ng-x-selection-plot>
+    <ng-y-selection-plot></ng-y-selection-plot>
 
-    <div ng-controller="yCtrl">
-        <label for="repeatSelectY">Y: </label><a role="button" ng-click="$root.$broadcast('resetVarY')" class="btn-xs pull-right">Reset</a>
-        <select name="repeatSelectY" ng-model="$root.gv.stpY">
-        <option ng-repeat="variable in $root.vars">{[{variable.Name}]}</option>
-        </select>
-    </div>
+    <ng-refresh-plot-stp></ng-refresh-plot-stp>
 
-    <div>
-        <br/>
-        <button type="button" ng-click="$root.$broadcast('refreshPlot')" class="btn btn-default btn-xs">Refresh</button>
-        <button type="button"
-                class="btn btn-default btn-xs pull-right"
-                ng-model="$root.stpPlotReady"
-                uib-btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
-        Show/Hide
-    </button>
-    </div>
 </uib-accordion-group>

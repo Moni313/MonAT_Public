@@ -1102,14 +1102,15 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             var newContent = [];
 
             //reset
-            //angular.forEach($rootScope.gv.varsCompleteness, function(vars){
-            //    vars.countVarMissing = 0;
-            //    vars.countVarPresent = 0;
-            //    vars.minV = 0;
-            //    vars.maxV = 0;
-            //    vars.meanV = 0;
-            //    vars.count = 0;
-            //});
+            //TODO why reset variables in VarsCompleteness and not in tableCompleteness???
+            angular.forEach($rootScope.gv.varsCompleteness, function(vars){
+                vars.countVarMissing = 0;
+                vars.countVarPresent = 0;
+                vars.minV = 0;
+                vars.maxV = 0;
+                vars.meanV = 0;
+                vars.count = 0;
+            });
 
             if(key === "Present"){
 
@@ -1188,7 +1189,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     // $log.debug(typeof (sum/countPresent));
                     //TODO duplicated code
                     //TODO review this inclusion ID and make it as requirement for the json file variables
-                    if(!vars.variable.includes('ID') && ((vars.count) / (vars.countVarPresent))) {
+                    if(!vars.Name.includes('ID') && ((vars.count) / (vars.countVarPresent))) {
                         table.minV = (vars.min).toFixed(2);
                         table.meanV = ((vars.count) / (vars.countVarPresent)).toFixed(2);
                         table.maxV = (vars.max).toFixed(2);

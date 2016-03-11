@@ -22,6 +22,41 @@ angular.module('dqDirective', [])
         }
     })
 
+    .directive('ngListJsonVariables', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/views/menu/listJsonVariables.html"
+        }
+    })
+
+    .directive('ngRefreshChartStpVars', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/views/menu/refreshChartStpVars.html"
+        }
+    })
+
+    .directive('ngRefreshPlotStp', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/views/menu/refreshPlotStp.html"
+        }
+    })
+
+    .directive('ngXSelectionPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/views/menu/xSelectionPlot.html"
+        }
+    })
+
+    .directive('ngYSelectionPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/views/menu/ySelectionPlot.html"
+        }
+    })
+
     .directive('ngMain', function(){
         return {
             restrict: 'E',
@@ -46,7 +81,7 @@ angular.module('dqDirective', [])
     .directive('ngBottom', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/view/components/bottom.html"
+            templateUrl: "/static/templates/views/components/bottom.html"
         }
     })
 
