@@ -8,12 +8,7 @@
             <div class="well">
                 <!-- <p id="timeExe"></p> -->
 
-                <!-- list of selected variables show/hide-->
                 <div>
-                    <!--<label>
-                         <input type="checkbox"
-                               ng-model="$root.gv.areStpAllShowCheckedCompleteness"
-                               ng-click="checkStpAllShowCompleteness()"> </input> All</label> -->
 
                     <label class="well-xs pull-right">
                         <input type="checkbox"
@@ -29,16 +24,7 @@
                                ng-click="$root.$broadcast('showCompletenessTableVariable')"> </input> {[{ variable.variable}]}</label>
                     <a role="button" ng-click="resetStpAllShowCompleteness()" class="btn-xs pull-right">Reset</a>
                 </div>
-                <div class="well-sm">
 
-                    <span class="well-sm">height = <input type="number"
-                                                          ng-model="optionStpPlot.chart.height"
-                                                          ng-change="$root.$broadcast('addTableVariablesToPlot')"></span>
-                    <span class="well-sm">width = <input type="number"
-                                                         ng-model="optionStpPlot.chart.width"
-                                                         ng-change="$root.$broadcast('addTableVariablesToPlot')"></span><br />
-
-                </div>
                 <!-- -->
 
                 <nvd3 options="optionStpPlot"

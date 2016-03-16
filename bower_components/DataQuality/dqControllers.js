@@ -3,7 +3,13 @@
 
 var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
+
+    /*
+     */
     .controller('dataQualityController', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log){
+        /*
+        recalculate the missing/present of the variable selected in the list
+         */
         $scope.$on('refresh', function(){
             $rootScope.gv.inDeptContent = [];
             $rootScope.gv.varsCompletenessInDeptPresent = [];
@@ -18,6 +24,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $scope.$broadcast('ptsChart');
             $scope.$broadcast('stpChart');
         });
+
+        $scope.$on('refreshPlot'), function(){
+            $rootScope.$broadcast('refreshPlot');
+        };
 
         //Global variables
         $rootScope.firstRun = false;
@@ -45,7 +55,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             ]
         };
 
-        $rootScope.marker = {}
+        $rootScope.marker = {};
+
     }])
 
     .controller('RevisionCtrl', function($scope, $log){
@@ -76,6 +87,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         }
     })
 
+    /*
+
+    */
     .controller('fileCtrl', ['$scope', '$rootScope',   function ($scope, $rootScope) {
         $scope.showContent = function ($fileContent) {
             $rootScope.content = JSON.parse($fileContent).entries; //TODO the .entries is due to the transformation of the csv to the json by python
@@ -104,16 +118,16 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                 SunburstIndex: 1, //use to loop the sunburst
 
                 //Select then plot
-                stpX: [],
-                stpY: [],
+                stpX: "",
+                stpY: "",
                 stpAll: [],
                 areStpAllChecked: false,
                 areStpAllShowCheckedCompleteness: false,
                 chartStpVars : 0,
 
                 //Plot then Select
-                ptsX: [],
-                ptsY: [],
+                ptsX: "",
+                ptsY: "",
                 ptsAll: [],
                 arePtsAllChecked: false,
                 chartStpPlot: 0
@@ -146,7 +160,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $rootScope.stpPlotReady = false;
         });
     }])
-    .controller('allVarsCtrl', ['$scope', '$rootScope', function($scope, $rootScope){
+    .controller('allVarsCtrl', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log){
 
         //start function completeness
         $scope.checkStpAllCompleteness = function () {
@@ -185,11 +199,26 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         };
         //end functions duplication
 
+        $scope.resetColorCompleteness = function(){
+            $rootScope.color.present = "#980043";
+            $rootScope.color.missing = "#d7b5d8";
+            $scope.stpRefreshColor();
+        };
 
-        //$rootScope.$on('refresh', function(){
-        //    $scope.$broadcast('ptsChart');
-        //    $scope.$broadcast('stpChart');
-        //})
+        $scope.stpRefreshColor =  function(){
+
+            //refresh charts (horizontal bar chart and sunburst)
+            //$rootScope.$broadcast('ptsChart');
+            $rootScope.$broadcast('redrawStpCharts');
+
+            //refresh plot
+            if($rootScope.gv.stpX && $rootScope.gv.stpY){
+                $log.debug('changing color in the plot', $rootScope.gv.stpX, $rootScope.gv.stpY);
+                $rootScope.$broadcast('refreshPlot');
+            }
+        };
+
+
     }])
 
     .controller('stpPlotCtrl', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log){
@@ -471,7 +500,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             var now1 = new Date();
             $scope.dataStpPlot = settingData();
 
-            $scope.api.update();
+            //TODO is this necessary?
+            //$scope.api.update();
 
             var now2 = new Date();
             var tTime = now2 - now1;
@@ -876,6 +906,12 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         });
 
+        $scope.$on('redrawStpCharts', function(){
+            $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
+            //$log.debug(JSON.stringify($scope.dataSunburstCompleteness));
+            $scope.dataSunburstCompleteness = sbc("");
+        });
+
         function tableCompleteness(){
             var tableCompleteness = [];
             //var globalIndexForSunburst = 0;
@@ -1213,9 +1249,16 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $rootScope.gv.inDeptContent = newContent;
         }
 
+
+
     }])
     //end Select then plot menu
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1252,8 +1295,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         $rootScope.chartPtsVars = 0;
         $rootScope.chartPtsPlot = 0;
-    }])
 
+
+    }])
     .controller('showPtsCompleteness', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log) {
         $scope.$on('ptsChart', function () {
 
@@ -1397,14 +1441,14 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         $scope.tabs = [
         { title:'Selection',
-            templateUrl: "/static/templates/views/components/middleStp.html",
+            templateUrl: "/static/templates/components/middleStp.html",
             active: true,
             shortTitle: 'stpChart'
             //myStyle: "'background-color': 'red'",
         },
         { title:'Global',
             content:'Insert here directive',
-            templateUrl:"/static/templates/views/components/middlePts.html",
+            templateUrl:"/static/templates/components/middlePts.html",
             active: false,
             shortTitle: 'ptsChart'
             //myStyle: "'background-color' : 'blue'",
@@ -1420,6 +1464,3 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         };
 
     }]);
-
-
-

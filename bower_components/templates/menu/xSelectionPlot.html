@@ -1,5 +1,8 @@
 <div ng-controller="xCtrl">
-    <label for="repeatSelectX">X: </label><a role="button" ng-click="$root.$broadcast('resetVarX')" class="btn-xs pull-right">Reset</a>
+    <label class="btn-default btn-xs" for="repeatSelectX">X: </label>
+
+    <a role="button" ng-click="$root.$broadcast('resetVarX')" class="btn-xs pull-right">Reset</a>
+
     <select name="repeatSelectX" ng-model="$root.gv.stpX">
     <option ng-repeat="variable in $root.vars">{[{variable.Name}]}</option>
     </select>

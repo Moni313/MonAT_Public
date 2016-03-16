@@ -1,0 +1,29 @@
+<uib-accordion-group is-open="status.open.isFirstOpen">
+    <uib-accordion-heading>
+        <small>Selection
+            <i class="pull-right glyphicon"
+                            ng-class="{'glyphicon-chevron-down': status.open.isFirstOpen, 'glyphicon-chevron-right': !status.open.isFirstOpen}">
+            </i>
+        </small>
+    </uib-accordion-heading>
+
+    <div ng-controller="allVarsCtrl">
+
+        <ng-stp-completeness></ng-stp-completeness>
+        <hr />
+        <ng-stp-duplication></ng-stp-duplication>
+
+    </div>
+
+    <hr />
+
+    <div>
+        <ng-x-selection-plot></ng-x-selection-plot>
+        <ng-y-selection-plot></ng-y-selection-plot>
+
+        <ng-stp-plot-input></ng-stp-plot-input>
+
+        <ng-stp-refresh-plot></ng-stp-refresh-plot>
+    </div>
+
+</uib-accordion-group>

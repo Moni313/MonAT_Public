@@ -4,86 +4,116 @@ angular.module('dqDirective', [])
     .directive('ngHorizontalMenu', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/HorizontalMenu.html"
+            templateUrl: "/static/templates/menu/HorizontalMenu.html"
         }
     })
 
     .directive('ngStpMenu', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/StpMenu.html"
+            templateUrl: "/static/templates/menu/StpMenu.html"
+        }
+    })
+
+    .directive('ngStpCompleteness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/stpCompleteness.html'
+        }
+    })
+
+    .directive('ngStpDuplication', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/stpDuplication.html'
+        }
+    })
+
+    .directive('ngStpPlotInput', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/stpPlotInput.html'
         }
     })
 
     .directive('ngPtsMenu', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/PtsMenu.html"
+            templateUrl: '/static/templates/menu/PtsMenu.html'
         }
     })
 
     .directive('ngListJsonVariables', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/listJsonVariables.html"
+            templateUrl: "/static/templates/menu/listJsonVariables.html"
         }
     })
 
-    .directive('ngRefreshChartStpVars', function(){
+    .directive('ngStpRefreshChartVars', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/refreshChartStpVars.html"
+            templateUrl: "/static/templates/menu/stpRefreshChartVars.html"
         }
     })
 
-    .directive('ngRefreshPlotStp', function(){
+    .directive('ngStpRefreshPlot', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/refreshPlotStp.html"
+            templateUrl: "/static/templates/menu/stpRefreshPlot.html"
+        }
+    })
+
+    .directive('ngColorCompleteness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/colorCompleteness.html"
         }
     })
 
     .directive('ngXSelectionPlot', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/xSelectionPlot.html"
+            templateUrl: "/static/templates/menu/xSelectionPlot.html"
         }
     })
 
     .directive('ngYSelectionPlot', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/menu/ySelectionPlot.html"
+            templateUrl: "/static/templates/menu/ySelectionPlot.html"
         }
     })
 
     .directive('ngMain', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/components/main.html"
+            templateUrl: "/static/templates/components/main.html"
         }
     })
 
     .directive('ngTableCompleteness', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/components/tableCompleteness.html"
+            templateUrl: "/static/templates/components/tableCompleteness.html"
         }
     })
 
     .directive('ngLeft', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/components/left.html"
+            templateUrl: "/static/templates/components/left.html"
         }
     })
 
     .directive('ngBottom', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/views/components/bottom.html"
+            templateUrl: "/static/templates/components/bottom.html"
         }
     })
+
+
 
     // Attributes
     .directive('onReadFile', function ($parse) {
