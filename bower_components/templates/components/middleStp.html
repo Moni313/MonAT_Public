@@ -3,11 +3,11 @@
 
     <!-- plot -->
     <div ng-controller="stpPlotCtrl" ng-show="$root.stpPlotReady">
-        <div class="row">
 
-            <div class="well">
+            <div class="row well" id="middleStp">
                 <!-- <p id="timeExe"></p> -->
 
+                <!--
                 <div>
 
                     <label class="well-xs pull-right">
@@ -15,15 +15,16 @@
                             ng-model="addVarToPlot"
                             ng-click="$root.$broadcast('addTableVariablesToPlot')"> </input>Show/Hide in Plot</label><br>
 
-
+-->
+                <a role="button" ng-click="resetStpAllShowCompleteness()" class="btn-xs pull-right">Reset</a><br>
                     <label class="btn-xs pull-right"
                            ng-repeat="variable in $root.gv.tableCompleteness">
                         <input type="checkbox"
                                class="well-xs"
                                ng-model="variable.Show"
-                               ng-click="$root.$broadcast('showCompletenessTableVariable')"> </input> {[{ variable.variable}]}</label>
-                    <a role="button" ng-click="resetStpAllShowCompleteness()" class="btn-xs pull-right">Reset</a>
-                </div>
+                               ng-click="showCompletenessTableVariable()"> </input> {[{ variable.variable}]}</label>
+
+<!--               </div>-->
 
                 <!-- -->
 
@@ -35,7 +36,6 @@
                 <ng-bottom></ng-bottom>
             </div>
 
-        </div>
         <!-- left --> <!--
 
         <!-- end left-->
@@ -45,6 +45,7 @@
 
 
 
+    <!-- horizontal bar chart, sunburst, table -->
     <div ng-if="$root.gv.chartStpVars">
         <div class="col-md-6 pull-left">
         <nvd3 config="{deepWatchData: true}"
@@ -66,6 +67,7 @@
             <!-- end table -->
         </div>
     </div>
+    <!-- end horizontal bar chart, sunburst, table -->
 </div>
 
 <!-- if duplication -->
