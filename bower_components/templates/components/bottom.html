@@ -1,12 +1,3 @@
-<!-- <div ng-repeat="variable in $root.gv.tableCompleteness" ng-if="variable.variable != $root.gv.stpX">
-    <div ng-if="variable.Show">
-        <div ng-repeat="item in listDataVariables">
-            <nvd3 options="item.optionSharingX" data="item.dataSharingX"></nvd3>
-        </div>
-    </div>
-</div> -->
-
-
-<div ng-repeat="variable in listDataVariables" ng-if="variable.variable != $root.gv.stpX">
+<div ng-repeat="variable in listDataVariables" ng-if="variable.variable.variable != $root.gv.stpX">
     <nvd3 options="variable.optionSharingX" data="variable.dataSharingX"></nvd3>
 </div>

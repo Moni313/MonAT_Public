@@ -41,19 +41,20 @@
         <ng-horizontal-menu></ng-horizontal-menu>
     </div>
 
-    <div ng-if="$root.ready">
+    <div class="row-fluid">
+        <div ng-if="$root.ready">
 
-        <div class="col-md-2" ng-controller="AccordionCtrl">
-            <uib-accordion close-others="oneAtATime">
-                <ng-stp-menu></ng-stp-menu>
-                <!-- <ng-pts-menu></ng-pts-menu> -->
-            </uib-accordion>
+            <div class="col-md-2" ng-controller="AccordionCtrl">
+                <uib-accordion close-others="oneAtATime">
+                    <ng-stp-menu></ng-stp-menu>
+                    <!-- <ng-pts-menu></ng-pts-menu> -->
+                </uib-accordion>
+            </div>
+
+            <div class="col-md-10">
+                <ng-main></ng-main>
+            </div>
         </div>
-
-        <div class="col-md-10">
-            <ng-main></ng-main>
-        </div>
-
     </div>
 </div>
 

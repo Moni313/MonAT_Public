@@ -1,33 +1,40 @@
 <!-- if completeness -->
-<div ng-controller="showStpCompleteness">
+<div ng-controller="showStpCompleteness" id="widthPlot">
 
     <!-- plot -->
-    <div ng-controller="stpPlotCtrl" ng-show="$root.stpPlotReady">
+    <div ng-controller="stpPlotCtrl" ng-show="$root.stpPlotReady" class="well-large">
 
-            <div class="row well" id="middleStp">
-                <!-- <p id="timeExe"></p> -->
+        <!--
+            <div>
 
-                <!--
-                <div>
-
-                    <label class="well-xs pull-right">
-                        <input type="checkbox"
-                            ng-model="addVarToPlot"
-                            ng-click="$root.$broadcast('addTableVariablesToPlot')"> </input>Show/Hide in Plot</label><br>
+                <label class="well-xs pull-right">
+                    <input type="checkbox"
+                        ng-model="addVarToPlot"
+                        ng-click="$root.$broadcast('addTableVariablesToPlot')"> </input>Show/Hide in Plot</label><br>
 
 -->
-                <a role="button" ng-click="resetStpAllShowCompleteness()" class="btn-xs pull-right">Reset</a><br>
-                    <label class="btn-xs pull-right"
-                           ng-repeat="variable in $root.gv.tableCompleteness">
-                        <input type="checkbox"
-                               class="well-xs"
-                               ng-model="variable.Show"
-                               ng-click="showCompletenessTableVariable()"> </input> {[{ variable.variable}]}</label>
+        <div class="row">
+           <!-- <a role="button" ng-click="resetStpAllShowCompleteness()" class="btn-xs pull-right">Reset</a><br> -->
+                <label class="btn-xs pull-right"
+                       ng-repeat="variable in $root.gv.tableCompleteness">
+                    <input type="checkbox"
+                           class="well-xs"
+                           ng-model="variable.Show"
+                           ng-click="$root.$broadcast('refreshPlot')"> </input> {[{ variable.variable}]}</label>
+        </div>
+
+            <!-- <p id="timeExe"></p> -->
 
 <!--               </div>-->
 
-                <!-- -->
+            <!-- -->
 
+        <div class="row col-md-12 well">
+
+            <div ng-repeat="variable in listDataVariables" ng-if="variable.variable.variable != $root.gv.stpY" class="pull-left col-md-1">
+                <nvd3 options="variable.optionSharingY" data="variable.dataSharingY"></nvd3>
+            </div>
+            <div class="col-md-12" id="stpPlotAndBottom">
                 <nvd3 options="optionStpPlot"
                       data="dataStpPlot"
                       api="api"
@@ -35,6 +42,7 @@
 
                 <ng-bottom></ng-bottom>
             </div>
+        </div>
 
         <!-- left --> <!--
 
@@ -45,6 +53,7 @@
 
 
 
+    <div class="row">
     <!-- horizontal bar chart, sunburst, table -->
     <div ng-if="$root.gv.chartStpVars">
         <div class="col-md-6 pull-left">
@@ -66,6 +75,7 @@
             <ng-table-completeness></ng-table-completeness>
             <!-- end table -->
         </div>
+    </div>
     </div>
     <!-- end horizontal bar chart, sunburst, table -->
 </div>
