@@ -41,31 +41,127 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         //http://colorbrewer2.org/
         $rootScope.color = {
-            missing: "#d7b5d8", // "#9ecae1", // "#a1dab4", //"#d7b5d8",
-            present: "#980043" // "#3182bd" //"#253494" //"#980043"
+            missing: "#6baed6", //"#d7b5d8", // "#9ecae1", // "#a1dab4", //"#d7b5d8",
+            present: "#08306b" //"#980043" // "#3182bd" //"#253494" //"#980043"
         };
 
         $rootScope.colorRange = {
-            //darker
             missing: [
-                "#006d2c", "#810f7c", "#0868ac", "#b30000", "#016c59",
-                "#7a0177", "#253494", "#bd0026", "#2ca25f", "#8856a7",
-                "#43a2ca", "#dd1c77", "#2b8cbe", "#f03b20", "#1c9099"
+                "#08306b",
+                "#08519c",
+                "#2171b5",
+                "#4292c6",
+                "#6baed6",
+                "#9ecae1"
             ],
-            //lighter
-            present : [
-                "#66c2a4", "#8c96c6", "#7bccc4", "#fc8d59", "#67a9cf",
-                "#f768a1", "#41b6c4", "#fd8d3c", "#b2e2e2", "#b3cde3",
-                "#bae4bc", "#d7b5d8", "#bdc9e1", "#fecc5c", "#bdc9e1"
+            present: [
+                "#3f007d",
+                "#54278f",
+                "#6a51a3",
+                "#807dba",
+                "#9e9ac8",
+                "#bcbddc"
             ]
+            //missing: [
+            //    "#66c2a4"
+            //    , "#fdd49e"
+            //    , "#6a51a3"
+            //    , "#d0d1e6"
+            //    , "#d4b9da"
+            //    , "#c7e9b4"
+            //    , "#fee391"
+            //    , "#d9d9d9"
+            //    , "#fc8d59"
+            //    , "#74a9cf"
+            //    , "#f768a1"
+            //    , "#41b6c4"
+            //    , "#fd8d3c"
+            //    , "#969696"
+            //    , "#ccece6"
+            //
+            //
+            //],
+            //present: [
+            //    "#00441b"
+            //    , "#d7301f"
+            //    , "#dadaeb"
+            //    , "#0570b0"
+            //    , "#e7298a"
+            //    , "#1d91c0"
+            //    , "#ec7014"
+            //    , "#525252"
+            //    , "#7f0000"
+            //    , "#023858"
+            //    , "#49006a"
+            //    , "#081d58"
+            //    , "#800026"
+            //    , "#000000"
+            //    , "#238b45"
+            //]
+
+            ////darker
+            //missing: [
+            //    "#006d2c", //1
+            //    "#810f7c", //2
+            //    "#0868ac", //3
+            //    "#b30000", //4
+            //    "#016c59", //5
+            //    "#7a0177", //6
+            //    "#253494", //7
+            //    "#bd0026", //8
+            //    "#2ca25f", //9
+            //    "#8856a7", //10
+            //    "#43a2ca", //11
+            //    "#dd1c77", //12
+            //    "#2b8cbe", //13
+            //    "#f03b20", //14
+            //    "#1c9099"  //15
+            //],
+            ////lighter
+            //present : [
+            //    "#66c2a4", //1
+            //    "#8c96c6", //2
+            //    "#7bccc4", //3
+            //    "#fc8d59", //4
+            //    "#67a9cf", //5
+            //    "#f768a1", //6
+            //    "#41b6c4", //7
+            //    "#fd8d3c", //8
+            //    "#b2e2e2", //9
+            //    "#b3cde3", //10
+            //    "#bae4bc", //11
+            //    "#d7b5d8", //12
+            //    "#bdc9e1", //13
+            //    "#fecc5c", //14
+            //    "#bdc9e1"  //15
+            //]
         };
 
-        $rootScope.marker = {};
-
+        $rootScope.marker = {
+            circleMarker: "/static/myImg/circle.png",
+            "triangleUp": "/static/myImg/triangle-up.png",
+            triangleDown: "/static/myImg/triangle-down.png"
+        };
 
         $rootScope.stp = {
             plotHeight : 500,
             plotWidth : 0
+        }
+
+
+        $rootScope.history = {
+            file: "", //name of the file uploaded
+            steps: {
+                index : 0,
+                firstRun: false,
+                stpPlotReady: false,
+
+
+                tableCompleteness: [],
+                inDeptContent: [],
+                stpX : "",
+                stpY: "",
+            }
         }
 
     }])
@@ -101,11 +197,11 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
     /*
 
     */
-    .controller('fileCtrl', ['$scope', '$rootScope',   function ($scope, $rootScope) {
+    .controller('fileCtrl', ['$scope', '$rootScope', '$log',  function ($scope, $rootScope, $log) {
         $scope.showContent = function ($fileContent) {
+
             $rootScope.content = JSON.parse($fileContent).entries; //TODO the .entries is due to the transformation of the csv to the json by python
             $rootScope.ready = true;
-            var variables = Object.keys($rootScope.content[0]);
 
             $rootScope.vars = [];  // {Name: "", Selected: false}
 
@@ -145,13 +241,23 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
             };
 
+            var variables = Object.keys($rootScope.content[0]);
             angular.forEach(variables, function(v){
                 $rootScope.vars.push({Name: v, Selected: false, Show: false});
                 $rootScope.gv.varsCompleteness.push(
-                    {Name: v, Selected: false, countVarMissing: 0, countVarPresent: 0, min: 0, max: 0, mean: 0}
+                    {
+                        Name: v,
+                        Selected: false,
+                        countVarMissing: 0,
+                        countVarPresent: 0,
+                        min: 0,
+                        max: 0,
+                        mean: 0
+                    }
                 );
 
             });
+
         }
     }])
 
@@ -224,10 +330,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $rootScope.$broadcast('redrawStpCharts');
 
             //refresh plot
-            if($rootScope.gv.stpX && $rootScope.gv.stpY){
-                $log.debug('changing color in the plot', $rootScope.gv.stpX, $rootScope.gv.stpY);
-                $rootScope.$broadcast('refreshPlot');
-            }
+            //if($rootScope.gv.stpX && $rootScope.gv.stpY){
+            //    $log.debug('changing color in the plot', $rootScope.gv.stpX, $rootScope.gv.stpY);
+            //    $rootScope.$broadcast('refreshPlot');
+            //}
 
             $rootScope.$broadcast('redrawStpBottomCharts');
         };
@@ -272,13 +378,20 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             // {key: 'Missing', values:[{label: variable, value: countMissing}]}
             var result = [];
             result.push({key: 'Missing', color: $rootScope.color.missing, values:[]});
+            var startRange = 0.00;
             angular.forEach(data, function(d){
-                var label = (parseFloat(d.key)).toFixed(2);
+                var label = parseFloat(d.key).toFixed(2);
+                //$log.debug(label, typeof(label), "\nstartRange: ", startRange);
+                for(startRange; startRange<label; startRange = startRange + 0.01){
+                    result[0].values.unshift({label: startRange, value: 0});
+                }
+                //unshift is used to prepare the array for vertical display
                 result[0].values.unshift({label: label, value: d.count});
             });
             //$log.debug(JSON.stringify(result));
             return result;
         }
+
 
         /**
          *
@@ -349,6 +462,70 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             return resultData;
         }
 
+        function completenessCategorical(variable){
+            var data = [];
+            var actualContent = [];
+            var size = 0.1; //TODO size and shapes is alwasy the same make it global
+            var shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'];
+
+            if ($rootScope.gv.inDeptContent.length <= 0) {
+                actualContent = $rootScope.content;
+            }
+            else actualContent = $rootScope.gv.inDeptContent;
+
+            var groupedActualContent = Enumerable.From(actualContent)
+                .GroupBy(function(item) { return item[variable]; }).ToArray();
+
+            $log.debug("grouped: ", groupedActualContent);
+            var index = 0;
+            angular.forEach(groupedActualContent, function(item){
+                $log.debug("sortedItem ", item);
+                data.push({key: item.source[0][variable], values: []});
+                angular.forEach(item.source, function(i){
+                    if (i[$rootScope.gv.stpX] === null
+                    || i[$rootScope.gv.stpX] === ""
+                    || i[$rootScope.gv.stpX] === "NaN"
+                    || i[$rootScope.gv.stpX] === ''
+                    || i[$rootScope.gv.stpX] === undefined) {
+                        // TODO array for horizontal bar chart
+                    }
+                    else if (i[$rootScope.gv.stpY] === null
+                        || i[$rootScope.gv.stpY] === ""
+                        || i[$rootScope.gv.stpY] === ''
+                        || i[$rootScope.gv.stpY] === "NaN"
+                        || i[$rootScope.gv.stpY] === undefined) {
+                        // TODO array for the bottom bar chart
+                    }
+                    else {
+                        if (i[variable] === null
+                            || i[variable] === ""
+                            || i[variable] === ''
+                            || i[variable] === "NaN"
+                            || i[variable] === undefined) {
+                            data[index].values.push(
+                                {
+                                    x: i[$rootScope.gv.stpX],
+                                    y: i[$rootScope.gv.stpY],
+                                    size: size,
+                                    shape: shapes[3]
+                                })
+                        }
+                        else {
+                            data[index].values.push(
+                                {
+                                    x: i[$rootScope.gv.stpX],
+                                    y: i[$rootScope.gv.stpY],
+                                    size: size,
+                                    shape: shapes[2]
+                                })
+                        }
+                    }
+                });
+                index +=1;
+            });
+            return data;
+        }
+
         /**
          *
          * @returns {Array}
@@ -356,8 +533,14 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         function settingData() {
             var data = [];
             var shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'];
-            data.push({key: 'Present', color: $rootScope.color.present, values: []});
-            data.push({key: 'Missing', color: $rootScope.color.missing, values: []});
+            data.push({key: 'XY', color: $rootScope.colorRange.present[0], values: []});
+            angular.forEach($rootScope.gv.tableCompleteness, function (item) {
+                if(item.variable != $rootScope.gv.stpX && item.variable != $rootScope.gv.stpY)
+                    data.push({key: item.variable, values: []});
+            });
+
+            //data.push({key: 'Present', color: $rootScope.color.present, values: []});
+            //data.push({key: 'Missing', color: $rootScope.color.missing, values: []});
             var size = 0.1;
 
 
@@ -366,19 +549,16 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             //var i = 0;
 
             var actualContent = [];
-            if($rootScope.gv.inDeptContent.length <= 0) {
+            if ($rootScope.gv.inDeptContent.length <= 0) {
                 actualContent = $rootScope.content;
             }
             else actualContent = $rootScope.gv.inDeptContent;
 
+
             $scope.optionStpPlot.chart.xDomain = getRange(actualContent, $rootScope.gv.stpX);
             $scope.optionStpPlot.chart.yDomain = getRange(actualContent, $rootScope.gv.stpY);
 
-
-
             angular.forEach(actualContent, function (entry) {
-                //  if (keepGoing) {
-                // TODO make an array with missing for the charts
                 if (entry[$rootScope.gv.stpX] === null
                     || entry[$rootScope.gv.stpX] === ""
                     || entry[$rootScope.gv.stpX] === "NaN"
@@ -394,28 +574,54 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     // TODO array for the bottom bar chart
                 }
                 else {
-                    //x and y have values
+
                     data[0].values.push(
                         {
                             x: entry[$rootScope.gv.stpX],
                             y: entry[$rootScope.gv.stpY],
                             size: size,
-                            shape: shapes[0],
-                            color: $rootScope.color.present
+                            shape: shapes[2],
                         }
                     );
-                }
-                //TODO delete to evaluate all the entries
-                // i = i + 1;
-                // if (i == 50000) {
-                //    console.log("i == ", i);
-                //   keepGoing = false;
-                //}
-                //}
-            });
 
+
+                    var index = 1;
+                    angular.forEach($rootScope.gv.tableCompleteness, function (item) {
+                        if(item.variable != $rootScope.gv.stpX && item.variable != $rootScope.gv.stpY) {
+                            if (entry[item.variable] === null
+                                || entry[item.variable] === ""
+                                || entry[item.variable] === "NaN"
+                                || entry[item.variable] === ''
+                                || entry[item.variable] === undefined) {
+                                data[index].values.push(
+                                    {
+                                        x: entry[$rootScope.gv.stpX],
+                                        y: entry[$rootScope.gv.stpY],
+                                        size: size,
+                                        shape: shapes[3] //TODO delete shapes and use $root.marker
+                                    }
+                                )
+                            }
+                            //else {
+                            //    data[index].values.push(
+                            //        {
+                            //            x: entry[$rootScope.gv.stpX],
+                            //            y: entry[$rootScope.gv.stpY],
+                            //            size: size,
+                            //            shape: shapes[0]
+                            //        }
+                            //    )
+                            //}
+                            index += 1;
+                        }
+                    });
+                }
+            });
             return data;
         }
+
+
+
 
         /**
          *
@@ -462,32 +668,35 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         $scope.$on('refreshPlot', function() {
             $rootScope.stpPlotReady = true;
 
+
+            //for layout
             var countSharingAxis = 1;
             angular.forEach($rootScope.listDataVariables, function(item){
                 if(item.variable.Show) countSharingAxis += 1;
             });
-
-            var spanWidthNumber = 12 - countSharingAxis;
-            var spanWidth = "col-md-".concat(spanWidthNumber);
-            //$log.debug(spanWidth, "\n", document.getElementById("stpPlotAndBottom"));
+            var spanWidth = "col-md-".concat(12 - countSharingAxis);
             document.getElementById("stpPlotAndBottom").className = spanWidth;
+            //document.getElementsByClassName("stpPlotAndBottom").className = spanWidth;
             var actualWidth = document.getElementById("stpPlotAndBottom").offsetWidth;
             if(actualWidth != 0) $rootScope.stp.plotWidth = actualWidth;
-            //$log.debug("actual width of plot: ", $rootScope.stp.plotWidth);
 
+
+
+            //TODO legend is hardcoded for missing/present markers encode
             var title = $rootScope.gv.stpX.concat(" vs ").concat($rootScope.gv.stpY);
+
             $scope.optionStpPlot = {
                 chart: {
                     type: 'scatterChart',
                     height: $rootScope.stp.plotHeight,
                     width: $rootScope.stp.plotWidth,
-                    color: d3.scale.category10().range(),
+                    color: $rootScope.colorRange.missing, //d3.scale.category10().range(), //TODO
                     scatter: {
                         onlyCircles: false
                     },
                     showDistX: true,
                     showDistY: true,
-                    showLegend: false,
+                    showLegend: true,
                     //tooltipContent: function(d) {
                     //    return d.series && '<h3>' + d.series[0].key + '</h3>';
                     //},
@@ -638,6 +847,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             //$scope.dataStpXSharingY = completenessOfVariableRespectY($rootScope.gv.stpX, $rootScope.gv.stpY);
 
             $scope.showCompletenessTableVariable();
+            $log.debug("listDataVariables ", $rootScope.listDataVariables);
+
         });
 
 
@@ -689,14 +900,17 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                             //    rotateLabels: 30,
                             //    showMaxMin: true
                             //},
-                            xDomain : $scope.optionStpPlot.chart.xDomain,
-                            xAxis : $scope.optionStpPlot.chart.xAxis,
+                            xDomain: $scope.optionStpPlot.chart.xDomain,
+                            xAxis: $scope.optionStpPlot.chart.xAxis,
                             yAxis: {
                                 axisLabel: variable.variable.concat(' missing'),
                                 axisLabelDistance: -10,
                                 tickFormat: function (d) {
                                     return d3.format(',.0f')(d);
                                 }
+                            },
+                            multibar: {
+                                height: 1
                             },
                             useInteractiveGuideline: true,
                             tooltip: {
@@ -707,7 +921,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                                 }
                             },
                             zoom: {
-                                enabled: true,
+                                enabled: false,
                                 scaleExtent: [1, 10],
                                 useFixedDomain: false,
                                 useNiceScale: false,
@@ -723,7 +937,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                         chart: {
                             type: 'multiBarHorizontalChart',
                             height: $rootScope.stp.plotHeight,
-                            //width: 130,
+                            width: 80,
                             color: d3.scale.category10().range(),
                             margin: {
                                 left: 0
@@ -758,98 +972,87 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                         }
                     };
 
+                    var optionCategorical = {
+                        chart: {
+                            type: 'scatterChart',
+                            height: $rootScope.stp.plotHeight,
+                            width: $rootScope.stp.plotWidth,
+                            color: $rootScope.colorRange.missing, //d3.scale.category10().range(), //TODO
+                            scatter: {
+                                onlyCircles: false
+                            },
+                            showDistX: true,
+                            showDistY: true,
+                            showLegend: true,
+                            //tooltipContent: function(d) {
+                            //    return d.series && '<h3>' + d.series[0].key + '</h3>';
+                            //},
+                            // duration: 350,
+
+                            xAxis: {
+                                axisLabel: $rootScope.gv.stpX,
+                                tickFormat: function (d) {
+                                    return d3.format('.0f')(d);
+                                },
+                                ticks: 8
+                            },
+                            yAxis: {
+                                axisLabel: $rootScope.gv.stpY,
+                                tickFormat: function (d) {
+                                    return d3.format(',.2f')(d);
+                                },
+                                axisLabelDistance: -5
+                            },
+                            zoom: {
+                                //NOTE: All attributes below are optional
+                                enabled: false,
+                                scaleExtent: [1, 10],
+                                useFixedDomain: false,
+                                useNiceScale: false,
+                                horizontalOff: false,
+                                verticalOff: false
+                                //unzoomEventType: 'dblclick.zoom'
+                            }
+                        },
+                        title: {
+                            enable: true,
+                            text: variable.variable,
+                            className: "h5"
+                        }
+                    };
+                    optionCategorical.chart.xDomain = $scope.optionStpPlot.chart.xDomain;
+                    optionCategorical.chart.yDomain = $scope.optionStpPlot.chart.yDomain;
+
 
                     var dataSharingX = completenessOfVariableRespectX(variable.variable, $rootScope.gv.stpX);
                     var dataSharingY = completenessOfVariableRespectY(variable.variable, $rootScope.gv.stpY);
+
+                    //TODO only if categorical!
+                    var dataCategorical = completenessCategorical(variable.variable);
 
                     $rootScope.listDataVariables.push(
                         {
                             variable: variable,
                             optionSharingX: optionSharingX,
                             optionSharingY: optionSharingY,
+                            optionCategorical: optionCategorical,
                             dataSharingX: dataSharingX,
-                            dataSharingY: dataSharingY
+                            dataSharingY: dataSharingY,
+                            dataCategorical: dataCategorical
                         }
                     );
-                    //$scope.listDataVariables.optionSharingX.chart.xDomain = $scope.optionStpPlot.chart.xDomain;
-
-                    //$scope.listDataVariables.optionSharingY.chart.yDomain = $scope.optionStpPlot.chart.yDomain;
-                    //$scope.listDataVariables.optionSharingY.chart.height = $scope.optionStpPlot.chart.height;
                 }
             });
-            $log.debug("list data variables\n", $rootScope.listDataVariables, "\n\n\n");
+            //$log.debug("list data variables\n", $rootScope.listDataVariables, "\n\n\n");
 
             //LOOP!! if($rootScope.stpPlotReady) $rootScope.$broadcast('refreshPlot');
         };
-
-        //TODO redraw plot with correct width
 
         $scope.$on('redrawStpBottomCharts', function(){
             $scope.showCompletenessTableVariable();
         });
 
 
-        //$scope.$on('addTableVariablesToPlot', function() {
-        //    $log.debug("add?", $scope.addVarToPlot);
-        //    if ($scope.addVarToPlot) {
-        //        //////////////////////////////////////////////////////
-        //        // set the content
-        //        var actualContent = [];
-        //        if ($rootScope.gv.inDeptContent.length <= 0) {
-        //            //$log.debug("Looking over all records");
-        //            actualContent = $rootScope.content;
-        //        }
-        //        else {
-        //            //$log.debug("Looking in dept");
-        //            actualContent = $rootScope.gv.inDeptContent;
-        //        }
-        //
-        //        angular.forEach($rootScope.gv.tableCompleteness, function (item) {
-        //            $log.debug("variable? ", item.Show);
-        //            if (item.Show) {
-        //                angular.forEach(actualContent, function (entry) {
-        //                    //TODO review the conditions: x and y have to be defined
-        //                    if ((entry[$rootScope.gv.stpX] !== null
-        //                        && entry[$rootScope.gv.stpX] !== ""
-        //                        && entry[$rootScope.gv.stpX] !== "NaN"
-        //                        && entry[$rootScope.gv.stpX] !== ''
-        //                        && entry[$rootScope.gv.stpX] !== undefined)
-        //                        &&
-        //                        (entry[$rootScope.gv.stpY] !== null
-        //                        && entry[$rootScope.gv.stpY] !== ""
-        //                        && entry[$rootScope.gv.stpY] !== "NaN"
-        //                        && entry[$rootScope.gv.stpY] !== ''
-        //                        && entry[$rootScope.gv.stpY] !== undefined)
-        //                        &&
-        //                        (entry[item.variable] === null
-        //                            || entry[item.variable] === ""
-        //                            || entry[item.variable] === "NaN"
-        //                            || entry[item.variable] === ''
-        //                            || entry[item.variable] === undefined)) {
-        //                        $log.debug();
-        //                        $scope.dataStpPlot[1].values.push(
-        //                            {
-        //                                x: entry[$rootScope.gv.stpX],
-        //                                y: entry[$rootScope.gv.stpY],
-        //                                size: 0.3,
-        //                                shape: 'diamond',
-        //                                color: $rootScope.color.missing
-        //                            }
-        //                        )
-        //                    }
-        //
-        //                });
-        //            }
-        //        });
-        //        $log.debug(JSON.stringify($scope.dataStpPlot));
-        //        $rootScope.$broadcast("refreshPlot");
-        //    }
-        //    else{
-        //        $scope.$apply(function(){
-        //            $scope.dataStpPlot = settingData();
-        //        });
-        //    }
-        //});
 
     }])
 
@@ -874,7 +1077,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     type: 'multiBarHorizontalChart',
                     height: 500,
                     //width: 400,
-                    color:  d3.scale.category10().range(),
+                    color:  $rootScope.colorRange.present,//d3.scale.category10().range(),
                     x: function (d) {
                         return d.label;
                     },
@@ -932,8 +1135,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $scope.optionsSunburstCompleteness = {
                 chart: {
                     type: 'sunburstChart',
-                    height: 300,
-                    color: d3.scale.category20c(),
+                    height: 200,
+                    color: $rootScope.colorRange.present, //d3.scale.category20c(),
                     duration: 350,
                     "sunburst": {
                         mode: "count"
@@ -961,7 +1164,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         //redraw colors
         function redrawSunburstColors(sunburst){
-            $log.debug("sunburst", JSON.stringify(sunburst));
+            //$log.debug("sunburst", JSON.stringify(sunburst));
             angular.forEach(sunburst, function(item) {
                 if (item.name.includes('Missing')) item.color = $rootScope.color.missing;
                 else if (item.name.includes('Present')) item.color = $rootScope.color.present;

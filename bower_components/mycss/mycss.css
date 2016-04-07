@@ -17,3 +17,10 @@
     cursor: inherit;
     display: block;
 }
+
+.div_space{
+    height: 25px;
+    border-bottom: groove gray 2px;
+    margin-bottom: 25px;
+}
+

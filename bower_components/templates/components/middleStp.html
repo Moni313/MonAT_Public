@@ -1,83 +1,81 @@
 <!-- if completeness -->
-<div ng-controller="showStpCompleteness" id="widthPlot">
+<div ng-controller="showStpCompleteness" class="well">
 
-    <!-- plot -->
-    <div ng-controller="stpPlotCtrl" ng-show="$root.stpPlotReady" class="well-large">
+    <!-- plot and bottom/left -->
+    <div ng-controller="stpPlotCtrl" ng-show="$root.stpPlotReady" id="widthPlot">
 
-        <!--
-            <div>
+        <!-- <p id="timeExe"></p> -->
 
-                <label class="well-xs pull-right">
-                    <input type="checkbox"
-                        ng-model="addVarToPlot"
-                        ng-click="$root.$broadcast('addTableVariablesToPlot')"> </input>Show/Hide in Plot</label><br>
+        <div class="row col-md-12">
 
--->
-        <div class="row">
-           <!-- <a role="button" ng-click="resetStpAllShowCompleteness()" class="btn-xs pull-right">Reset</a><br> -->
-                <label class="btn-xs pull-right"
+            <div class="row div_space">
+                <label class="btn-xs"
                        ng-repeat="variable in $root.gv.tableCompleteness">
                     <input type="checkbox"
                            class="well-xs"
                            ng-model="variable.Show"
                            ng-click="$root.$broadcast('refreshPlot')"> </input> {[{ variable.variable}]}</label>
-        </div>
+                 </div>
 
-            <!-- <p id="timeExe"></p> -->
-
-<!--               </div>-->
-
-            <!-- -->
-
-        <div class="row col-md-12 well">
-
-            <div ng-repeat="variable in listDataVariables" ng-if="variable.variable.variable != $root.gv.stpY" class="pull-left col-md-1">
-                <nvd3 options="variable.optionSharingY" data="variable.dataSharingY"></nvd3>
+            <div class="row">
+                <p class="pull-right btn-xs">
+                    <img src="{[{$root.marker.triangleUp}]}" height="10px"/> Present |
+                    <img src="{[{$root.marker.triangleDown}]}"height="10px"/> Missing<br>
+                </p>
             </div>
+            <ng-left></ng-left>
             <div class="col-md-12" id="stpPlotAndBottom">
+
                 <nvd3 options="optionStpPlot"
                       data="dataStpPlot"
                       api="api"
                       config="{deepWatchDataDepth: 0, refreshDataOnly: true}"></nvd3>
 
+
                 <ng-bottom></ng-bottom>
             </div>
+
+            <div class="row" class="stpPlotAndBottom">
+                <ng-categorical-plot></ng-categorical-plot>
+            </div>
         </div>
-
-        <!-- left --> <!--
-
-        <!-- end left-->
+        <div class="row div_space col-md-12"></div>
 
     </div>
-    <!-- end plot -->
-
+    <!-- end plot and bottom/left -->
 
 
     <div class="row">
-    <!-- horizontal bar chart, sunburst, table -->
-    <div ng-if="$root.gv.chartStpVars">
-        <div class="col-md-6 pull-left">
-        <nvd3 config="{deepWatchData: true}"
-              options="optionsMultiBarHorizontalChartCompleteness"
-              data="dataMultiBarHorizontalChartCompleteness">
-        </nvd3>
-        </div>
-        <h6>{[{JSON.stringify($root.gv.stpPathCompleteness)}]}</h6>
-        <div class="col-md-6">
-
+        <!-- horizontal bar chart, sunburst, table -->
+        <div ng-if="$root.gv.chartStpVars">
             <!-- sunburst -->
-            <nvd3 config="{deepWatchData: true, refreshDataOnly: false}"
-                  options="optionsSunburstCompleteness"
-                  data="dataSunburstCompleteness"></nvd3>
-            <!-- end sunburst -->
+            <div class="row">
+                <nvd3 class="col-md-6" config="{deepWatchData: true, refreshDataOnly: false}"
+                      options="optionsSunburstCompleteness"
+                      data="dataSunburstCompleteness"></nvd3>
+                <div class="row col-md-6">
+                    <p>Breadcrumb:</p>
+                    <span ng-repeat="item in $root.gv.stpPathCompleteness"> > {[{item.key}]}({[{item.label}]})</span>
+                </div>
+            </div>
+                <!-- end sunburst -->
 
-            <!-- table -->
-            <ng-table-completeness></ng-table-completeness>
-            <!-- end table -->
+            <div class="col-md-6 pull-left">
+                <nvd3 config="{deepWatchData: true}"
+                      options="optionsMultiBarHorizontalChartCompleteness"
+                      data="dataMultiBarHorizontalChartCompleteness">
+                </nvd3>
+            </div>
+            <div class="col-md-6">
+                <br>
+                <!-- table -->
+                <ng-table-completeness></ng-table-completeness>
+                <!-- end table -->
+            </div>
         </div>
-    </div>
     </div>
     <!-- end horizontal bar chart, sunburst, table -->
+
 </div>
 
 <!-- if duplication -->

@@ -113,6 +113,12 @@ angular.module('dqDirective', [])
         }
     })
 
+    .directive('ngCategoricalPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/categoricalPlot.html"
+        }
+    })
 
 
     // Attributes
@@ -129,6 +135,7 @@ angular.module('dqDirective', [])
                     var reader = new FileReader();
 
                     reader.onload = function(onLoadEvent) {
+
                         scope.$apply(function() {
                             fn(scope, {$fileContent:onLoadEvent.target.result});
                         });
@@ -136,6 +143,8 @@ angular.module('dqDirective', [])
                     scope.nameFile = (onChangeEvent.srcElement || onChangeEvent.target).files[0].name;
                     scope.variables =
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
+
+
                 });
             }
         };
