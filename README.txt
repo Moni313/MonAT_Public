@@ -66,3 +66,10 @@ bower angular-bootstrap#^1.1.2 install angular-bootstrap#1.1.2
 
 angular-bootstrap#1.1.2 bower_components/angular-bootstrap
 └── angular#1.5.0
+
+
+
+
+//////////////////////////////////////////////////////////////
+toggle-menu left
+http://stackoverflow.com/questions/32324321/how-to-hide-sidebar-in-bootstrap-by-default

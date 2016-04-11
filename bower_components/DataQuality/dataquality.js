@@ -2,8 +2,16 @@
 
     console.log(timestamp());
 
-    var dataQuality = angular.module('dataQuality', ['dqControllers', 'dqFactory','dqDirective',  'nvd3', 'ui.bootstrap'])
-        .config(function($interpolateProvider) {
+    var dataQuality = angular.module('dataQuality',
+        [
+            //'dqFactory',
+            'dqDirective',
+            'controllers',
+            //'dqControllers', //TODO delete this when yuo finished the migration
+            'nvd3',
+            //'ui.bootstrap'
+        ]
+    ).config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('{[{');
         $interpolateProvider.endSymbol('}]}');
     });

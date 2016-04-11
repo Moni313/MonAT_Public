@@ -1,9 +1,0 @@
-<div ng-controller="yCtrl">
-    <label class="btn-default btn-xs"for="repeatSelectY">Y: </label>
-
-    <a role="button" ng-click="$root.$broadcast('resetVarY')" class="btn-xs pull-right">Reset</a>
-
-    <select name="repeatSelectY" ng-model="$root.gv.stpY">
-    <option ng-repeat="variable in $root.vars">{[{variable.Name}]}</option>
-    </select>
-</div>

@@ -1,0 +1,71 @@
+<div class="well-sm">
+    <div>
+        <button type="button"
+        data-toggle="collapse" data-target="#tableIndex" class="accordion-toggle btn btn-xs btn-default"> Index
+        </button>
+        <button type="button"
+        data-toggle="collapse" data-target="#tableCategorical" class="accordion-toggle btn btn-xs btn-default"> Categorical
+        </button>
+        <button type="button"
+        data-toggle="collapse" data-target="#tableNumerical" class="accordion-toggle btn btn-xs btn-default"> Numerical
+        </button>
+    </div>
+    <br>
+    <table id="tableIndex" class="table table-bordered table-striped accordian-body collapse">
+        <thead><tr>
+            <td colspan="3" style="text-align: center">Index
+            </td>
+        </tr></thead>
+        <thead>
+            <tr>
+                <td><p class="text-center">Variable</p></td>
+                <td><p class="text-center"># missing</p></td>
+                <td><p class="text-center"># present</p></td>
+            </tr>
+        </thead>
+        <tr ng-repeat="row in variables" ng-if="row.state.isIndex && row.state.selected">
+            <td>{[{row.name}]}</td>
+            <td><p class="text-right">{[{row.statistics.missing}]}</p></td>
+            <td><p class="text-right">{[{row.statistics.present}]}</p></td>
+        </tr>
+    </table>
+
+    <table id="tableCategorical" class="table table-bordered table-striped accordian-body collapse in">
+        <thead><tr><td colspan="3" style="text-align: center">Categorical</td></tr></thead>
+        <thead>
+            <tr>
+                <td><p class="text-center">Variable</p></td>
+                <td><p class="text-center"># missing</p></td>
+                <td><p class="text-center"># present</p></td>
+            </tr>
+        </thead>
+        <tr ng-repeat="row in variables" ng-if="row.state.isCategorical && row.state.selected">
+            <td>{[{row.name}]}</td>
+            <td><p class="text-right">{[{row.statistics.missing}]}</p></td>
+            <td><p class="text-right">{[{row.statistics.present}]}</p></td>
+        </tr>
+    </table>
+
+    <table id="tableNumerical" class="table table-bordered table-striped accordian-body collapse in">
+    <thead><tr><td colspan="6" style="text-align: center">Numerical</td></tr></thead>
+    <thead>
+        <tr>
+            <td><p class="text-center">Variable</p></td>
+            <td><p class="text-center"># missing</p></td>
+            <td><p class="text-center"># present</p></td>
+            <td><p class="text-center">min</p></td>
+            <td><p class="text-center">mean</p></td>
+            <td><p class="text-center">max</p></td>
+        </tr>
+    </thead>
+    <tr ng-repeat="row in variables" ng-if="row.state.isNumerical && row.state.selected">
+        <td>{[{row.name}]}</td>
+        <td><p class="text-right">{[{row.statistics.missing}]}</p></td>
+        <td><p class="text-right">{[{row.statistics.present}]}</p></td>
+        <td><p class="text-right">{[{row.statistics.min}]}</p></td>
+        <td><p class="text-right">{[{row.statistics.mean}]}</p></td>
+        <td><p class="text-right">{[{row.statistics.max}]}</p></td>
+    </tr>
+</table>
+</div>
+

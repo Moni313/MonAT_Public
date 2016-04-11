@@ -6,7 +6,15 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
     /*
      */
-    .controller('dataQualityController', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log){
+    .controller('dataQualityController', ['$scope', '$rootScope', function($scope, $rootScope){
+
+        $("#menu-toggle").click(function(e) {
+  e.preventDefault();
+  $("#wrapper").toggleClass("toggled");
+});
+
+
+
         /*
         recalculate the missing/present of the variable selected in the list
          */
@@ -30,9 +38,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $scope.$broadcast('stpChart');
         });
 
-        $scope.$on('refreshPlot'), function(){
-            $rootScope.$broadcast('refreshPlot');
-        };
+        //$scope.$on('refreshPlot', function(){
+        //    $rootScope.$broadcast('refreshPlot');
+        //});
 
         //Global variables
         $rootScope.firstRun = false;
@@ -46,58 +54,59 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         };
 
         $rootScope.colorRange = {
-            missing: [
-                "#08306b",
-                "#08519c",
-                "#2171b5",
-                "#4292c6",
-                "#6baed6",
-                "#9ecae1"
-            ],
-            present: [
-                "#3f007d",
-                "#54278f",
-                "#6a51a3",
-                "#807dba",
-                "#9e9ac8",
-                "#bcbddc"
-            ]
             //missing: [
-            //    "#66c2a4"
-            //    , "#fdd49e"
-            //    , "#6a51a3"
-            //    , "#d0d1e6"
-            //    , "#d4b9da"
-            //    , "#c7e9b4"
-            //    , "#fee391"
-            //    , "#d9d9d9"
-            //    , "#fc8d59"
-            //    , "#74a9cf"
-            //    , "#f768a1"
-            //    , "#41b6c4"
-            //    , "#fd8d3c"
-            //    , "#969696"
-            //    , "#ccece6"
-            //
-            //
+            //    "#08306b",
+            //    "#08519c",
+            //    "#2171b5",
+            //    "#4292c6",
+            //    "#6baed6",
+            //    "#9ecae1"
             //],
             //present: [
-            //    "#00441b"
-            //    , "#d7301f"
-            //    , "#dadaeb"
-            //    , "#0570b0"
-            //    , "#e7298a"
-            //    , "#1d91c0"
-            //    , "#ec7014"
-            //    , "#525252"
-            //    , "#7f0000"
-            //    , "#023858"
-            //    , "#49006a"
-            //    , "#081d58"
-            //    , "#800026"
-            //    , "#000000"
-            //    , "#238b45"
+            //    "#3f007d",
+            //    "#54278f",
+            //    "#6a51a3",
+            //    "#807dba",
+            //    "#9e9ac8",
+            //    "#bcbddc"
             //]
+
+            missing: [
+                "#66c2a4"
+                , "#fdd49e"
+                , "#6a51a3"
+                , "#d0d1e6"
+                , "#d4b9da"
+                , "#c7e9b4"
+                , "#fee391"
+                , "#d9d9d9"
+                , "#fc8d59"
+                , "#74a9cf"
+                , "#f768a1"
+                , "#41b6c4"
+                , "#fd8d3c"
+                , "#969696"
+                , "#ccece6"
+
+
+            ],
+            present: [
+                "#00441b"
+                , "#d7301f"
+                , "#dadaeb"
+                , "#0570b0"
+                , "#e7298a"
+                , "#1d91c0"
+                , "#ec7014"
+                , "#525252"
+                , "#7f0000"
+                , "#023858"
+                , "#49006a"
+                , "#081d58"
+                , "#800026"
+                , "#000000"
+                , "#238b45"
+            ]
 
             ////darker
             //missing: [
@@ -146,22 +155,31 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         $rootScope.stp = {
             plotHeight : 500,
             plotWidth : 0
-        }
+        };
 
 
         $rootScope.history = {
-            file: "", //name of the file uploaded
-            steps: {
+            /* TODO for security "file" cannot be retrieved from browser:
+             ask to reselect this file by give the name of the file investigated before
+             */
+            file: "/Users/Monica/PycharmMonica/data/GrowthData_Raw.json",
+            steps: [{
                 index : 0,
                 firstRun: false,
                 stpPlotReady: false,
+                ready: false,
+                color: $rootScope.color,
+                colorRange: $rootScope.colorRange,
+
+                gv: $rootScope.gv,
+
+                vars : [],
+                varsCompleteness: [],
 
 
-                tableCompleteness: [],
-                inDeptContent: [],
-                stpX : "",
-                stpY: "",
-            }
+                previousAction: "",
+                nextAction: ""
+            }]
         }
 
     }])
@@ -194,10 +212,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         };
     })
 
-    /*
-
-    */
-    .controller('fileCtrl', ['$scope', '$rootScope', '$log',  function ($scope, $rootScope, $log) {
+    .controller('fileCtrl', ['$scope', '$rootScope',  function ($scope, $rootScope) {
         $scope.showContent = function ($fileContent) {
 
             $rootScope.content = JSON.parse($fileContent).entries; //TODO the .entries is due to the transformation of the csv to the json by python
@@ -263,6 +278,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     //Select then plot menu
     .controller('xCtrl', ['$scope', '$rootScope',  function($scope, $rootScope){
         $scope.$on('resetVarX', function(){
@@ -271,6 +287,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $rootScope.listDataVariables = [];
         });
     }])
+
     .controller('yCtrl', ['$scope', '$rootScope', function($scope, $rootScope){
         $scope.$on('resetVarY', function(){
             $rootScope.gv.stpY = "";
@@ -278,7 +295,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             $rootScope.listDataVariables = [];
         });
     }])
-    .controller('allVarsCtrl', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log){
+
+    .controller('allVarsCtrl', ['$scope', '$rootScope', function($scope, $rootScope){
 
         //start function completeness
         $scope.checkStpAllCompleteness = function () {
@@ -320,10 +338,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         $scope.resetColorCompleteness = function(){
             $rootScope.color.present = "#980043";
             $rootScope.color.missing = "#d7b5d8";
-            $scope.stpRefreshColor();
+            $scope.completenessRefreshColor();
         };
 
-        $scope.stpRefreshColor =  function(){
+        $scope.completenessRefreshColor =  function(){
 
             //refresh charts (horizontal bar chart and sunburst)
             //$rootScope.$broadcast('ptsChart');
@@ -345,7 +363,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         //$scope.addVarToPlot = false;
 
         $rootScope.stp.plotWidth = document.getElementById("widthPlot").offsetWidth;
-        $log.debug($rootScope.stp.plotWidth);
+        //$log.debug($rootScope.stp.plotWidth);
 
 
         /**
@@ -403,6 +421,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             if(variable == respectToVar) return null;
 
             //////////////////////////////////////////////////////
+
             // set the content
             var actualContent = [];
             if($rootScope.gv.inDeptContent.length <= 0) {
@@ -414,9 +433,26 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                 actualContent = $rootScope.gv.inDeptContent;
             }
 
-            ////////////////////////////////////////////////////
-            // initialising the result
+
             var resultData = [];
+            //if non is missing fill count with 0
+            // Optimisation
+            angular.forEach($rootScope.gv.tableCompleteness, function(item){
+                if(item.variable == variable && item.missing == 0){
+                    var range = getRange(actualContent, respectToVar);
+                    var index = 0;
+                    for(index; index < range.max; index = index+0.01){
+                        resultData.push({key: index, count: 0})
+                    }
+                    return resultData;
+                }
+            });
+
+
+            ////////////////////////////////////////////////////
+
+            // initialising the resultData with keys
+
             angular.forEach(actualContent, function (entry) {
                 //$log.debug("adding: ", entry[respectToVar], " count: 0");
                 //var label = (entry[respectToVar]).toFixed(2);
@@ -440,6 +476,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             resultData = removeDuplicatesFromObjArray(resultData, "key");
             //$log.debug(resultData);
 
+
+
             angular.forEach(actualContent, function (entry) {
                 if(entry[variable]=== null
                     || entry[variable] === ""
@@ -458,10 +496,14 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                     });
                 }
             });
+            //$log.debug("resultdata");
             //$log.debug(resultData);
+            //$log.debug(JSON.stringify(resultData));
             return resultData;
         }
 
+        //TODO calculate only for categorical variable!
+        //se presenti sono 0 ?
         function completenessCategorical(variable){
             var data = [];
             var actualContent = [];
@@ -476,10 +518,11 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             var groupedActualContent = Enumerable.From(actualContent)
                 .GroupBy(function(item) { return item[variable]; }).ToArray();
 
-            $log.debug("grouped: ", groupedActualContent);
+            //$log.debug("grouped: ", groupedActualContent);
             var index = 0;
             angular.forEach(groupedActualContent, function(item){
-                $log.debug("sortedItem ", item);
+                //$log.debug("sortedItem ", item);
+
                 data.push({key: item.source[0][variable], values: []});
                 angular.forEach(item.source, function(i){
                     if (i[$rootScope.gv.stpX] === null
@@ -580,7 +623,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                             x: entry[$rootScope.gv.stpX],
                             y: entry[$rootScope.gv.stpY],
                             size: size,
-                            shape: shapes[2],
+                            shape: shapes[2]
                         }
                     );
 
@@ -657,12 +700,12 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             angular.forEach($rootScope.gv.tableCompleteness, function (item) {
                 item.Show = $rootScope.gv.areStpAllShowCheckedCompleteness;
             });
-        }
+        };
         $scope.resetStpAllShowCompleteness = function(){
             angular.forEach($rootScope.gv.tableCompleteness, function (item) {
                 item.Show = false;
             });
-        }
+        };
 
 
         $scope.$on('refreshPlot', function() {
@@ -735,14 +778,14 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             };
 
 
-            var now1 = new Date();
+            //var now1 = new Date();
             $scope.dataStpPlot = settingData();
 
             //TODO is this necessary?
             //$scope.api.update();
 
-            var now2 = new Date();
-            var tTime = now2 - now1;
+            //var now2 = new Date();
+            //var tTime = now2 - now1;
             //document.getElementById("timeExe").textContent = tTime.toString();
 
             //refresh
@@ -847,7 +890,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
             //$scope.dataStpXSharingY = completenessOfVariableRespectY($rootScope.gv.stpX, $rootScope.gv.stpY);
 
             $scope.showCompletenessTableVariable();
-            $log.debug("listDataVariables ", $rootScope.listDataVariables);
+            //$log.debug("listDataVariables ", $rootScope.listDataVariables);
 
         });
 
@@ -929,7 +972,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
                                 verticalOff: true,
                                 unzoomEventType: 'dblclick.zoom'
                             }
-                        },
+                        }
                     };
 
                     //horizontal bar chart, sharing y
@@ -1056,7 +1099,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
     }])
 
-    .controller('showStpCompleteness', ['$scope', '$rootScope', '$log', function($scope, $rootScope, $log) {
+    .controller('showStpCompleteness', ['$scope', '$rootScope', function($scope, $rootScope) {
 
         $scope.title = "Completeness";
         //$scope.dataSunburstCompleteness = [{
@@ -1515,15 +1558,17 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
     }])
     //end Select then plot menu
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Plot then Select menu
     .controller('xPtsCtrl', ['$scope', '$rootScope',  function($scope, $rootScope){
         $scope.$on('resetVarX', function(){
@@ -1694,6 +1739,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
         }
     }])
     // end Plot then Select menu
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1703,7 +1749,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap'])
 
         $scope.tabs = [
         { title:'Selection',
-            templateUrl: "/static/templates/components/middleStp.html",
+            templateUrl: "/static/templates/components/completeness.html",
             active: true,
             shortTitle: 'stpChart'
             //myStyle: "'background-color': 'red'",

@@ -1,0 +1,11 @@
+<div ng-controller="xCtrl">
+    <label class="btn-default btn-xs" for="repeatSelectX">X: </label>
+
+    <a role="button" ng-click="resetVarX()" class="btn-xs pull-right">Reset</a>
+
+    <select name="repeatSelectX" ng-model="nameX">
+        <option ng-repeat="variable in variables"
+                ng-if="variable.state.isNumerical"
+        >{[{variable.name}]}</option>
+    </select>
+</div>

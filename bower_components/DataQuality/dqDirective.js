@@ -1,5 +1,85 @@
 angular.module('dqDirective', [])
 
+    //TODO reshuffle elements and attributes as in directory
+    //templates.components
+    //templates.menu
+    //templates.components.completeness
+    //templates.components.duplication
+    //...
+    //TODO rename some of them (delete stp substring)
+
+
+
+    //template.menu
+    .directive('ngMenuCompleteness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/completeness.html'
+        }
+    })
+
+    .directive('ngPlotInput', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/completeness/plotInput.html'
+        }
+    })
+    .directive('ngRefreshPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/completeness/refreshPlot.html"
+        }
+    })
+
+    .directive('ngXSelectionPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/completeness/xSelectionPlot.html"
+        }
+    })
+
+    .directive('ngYSelectionPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/completeness/ySelectionPlot.html"
+        }
+    })
+
+    .directive('ngNumericalPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/completeness/numericalPlot.html"
+        }
+    })
+
+    .directive('ngCategoricalPlot', function () {
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/completeness/categoricalPlot.html"
+        }
+    })
+
+    .directive('ngHybridPlot', function () {
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/completeness/hybridPlot.html"
+        }
+    })
+
+
+
+    .directive('ngDuplication', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/duplication.html'
+        }
+    })
+
+
+
+
+
+
     // Elements
     .directive('ngHorizontalMenu', function(){
         return {
@@ -8,33 +88,18 @@ angular.module('dqDirective', [])
         }
     })
 
-    .directive('ngStpMenu', function(){
+    .directive('ngMenu', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/menu/StpMenu.html"
+            templateUrl: "/static/templates/menu/Menu.html"
         }
     })
 
-    .directive('ngStpCompleteness', function(){
-        return {
-            restrict: 'E',
-            templateUrl: '/static/templates/menu/stpCompleteness.html'
-        }
-    })
 
-    .directive('ngStpDuplication', function(){
-        return {
-            restrict: 'E',
-            templateUrl: '/static/templates/menu/stpDuplication.html'
-        }
-    })
 
-    .directive('ngStpPlotInput', function(){
-        return {
-            restrict: 'E',
-            templateUrl: '/static/templates/menu/stpPlotInput.html'
-        }
-    })
+
+
+
 
     .directive('ngPtsMenu', function(){
         return {
@@ -46,44 +111,27 @@ angular.module('dqDirective', [])
     .directive('ngListJsonVariables', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/menu/listJsonVariables.html"
+            templateUrl: "/static/templates/menu/completeness/listJsonVariables.html"
         }
     })
 
-    .directive('ngStpRefreshChartVars', function(){
+    .directive('ngRefreshBarChart', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/menu/stpRefreshChartVars.html"
+            templateUrl: "/static/templates/menu/completeness/refreshBarChart.html"
         }
     })
 
-    .directive('ngStpRefreshPlot', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/stpRefreshPlot.html"
-        }
-    })
+
 
     .directive('ngColorCompleteness', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/menu/colorCompleteness.html"
+            templateUrl: "/static/templates/menu/completeness/colorCompleteness.html"
         }
     })
 
-    .directive('ngXSelectionPlot', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/xSelectionPlot.html"
-        }
-    })
 
-    .directive('ngYSelectionPlot', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/ySelectionPlot.html"
-        }
-    })
 
     .directive('ngMain', function(){
         return {
@@ -92,31 +140,45 @@ angular.module('dqDirective', [])
         }
     })
 
+    .directive('ngCompleteness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/completeness.html"
+        }
+    })
+
     .directive('ngTableCompleteness', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/tableCompleteness.html"
+            templateUrl: "/static/templates/components/completeness/tableCompleteness.html"
+        }
+    })
+
+    .directive('ngContextualMenu', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/completeness/contextualMenu.html"
         }
     })
 
     .directive('ngLeft', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/left.html"
+            templateUrl: "/static/templates/components/completeness/left.html"
         }
     })
 
     .directive('ngBottom', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/bottom.html"
+            templateUrl: "/static/templates/components/completeness/bottom.html"
         }
     })
 
-    .directive('ngCategoricalPlot', function(){
+    .directive('ngSharingPlot', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/categoricalPlot.html"
+            templateUrl: "/static/templates/components/completeness/sharingPlot.html"
         }
     })
 
