@@ -31,18 +31,26 @@
     </table>
 
     <table id="tableCategorical" class="table table-bordered table-striped accordian-body collapse in">
-        <thead><tr><td colspan="3" style="text-align: center">Categorical</td></tr></thead>
+        <thead><tr><td colspan="5" style="text-align: center">Categorical</td></tr></thead>
         <thead>
             <tr>
                 <td><p class="text-center">Variable</p></td>
                 <td><p class="text-center"># missing</p></td>
                 <td><p class="text-center"># present</p></td>
+                <td><p class="text-center"># categories</p></td>
+                <td><p class="text-center">categories</p></td>
             </tr>
         </thead>
         <tr ng-repeat="row in variables" ng-if="row.state.isCategorical && row.state.selected">
             <td>{[{row.name}]}</td>
             <td><p class="text-right">{[{row.statistics.missing}]}</p></td>
             <td><p class="text-right">{[{row.statistics.present}]}</p></td>
+            <td><p class="text-right">{[{row.state.categories.length}]}</p></td>
+            <td>
+                <ul class="text-center">
+                    <li ng-repeat="category in row.state.categories" ng-if="category!=''">{[{category}]}</li>
+                </ul>
+            </td>
         </tr>
     </table>
 

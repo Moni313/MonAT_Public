@@ -135,6 +135,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             show: false, //for content show plot/historicalBarChart/horizontalBarChart
                             isNumerical: row.numerical,
                             isCategorical: row.categorical,
+                            categories: row.categories,
                             isIndex: row.index
                         },
                         statistics: {

@@ -187,6 +187,7 @@ angular.module('dqFactory', [])
                 // $log.debug(typeof (sum/countPresent));
                 //TODO review this inclusion ID and make it as requirement for the json file variables
                 // console.log(variable);
+                //TODO if there are encoding problems (e.g. gender is encoded with ['F', 'M'] and one value is encoded with ['1', '0'] categorical is not more recognised
                 if(!variable.includes('ID') && (sum/countPresent)) {
                     row4table.min = min.toFixed(2);
                     row4table.mean = (sum / countPresent).toFixed(2);
@@ -203,17 +204,29 @@ angular.module('dqFactory', [])
 
                     row4table.numerical = false;
 
-                    if(variable.includes('ID')) {
+                    if (variable.includes('ID')) {
                         row4table.index = true;
                         row4table.categorical = false;
                     }
                     else {
                         row4table.categorical = true;
                         row4table.index = false;
+                        row4table.categories = [];
+                        var actualContent = data.getActualContent();
+                        var groups = Enumerable.From(actualContent)
+                            .GroupBy(function (item) {
+                                return item[variable];
+                            }).ToArray();
+                        angular.forEach(groups, function (gr) {
+                            row4table.categories.push(gr.source[0][variable]);
+                        });
                     }
                 }
                 row4table.present = countPresent;
                 row4table.missing = countMissing;
+
+                console.log("categories for the ", variable, "variable:\n", row4table.categories);
+
                 return row4table;
             },
 
