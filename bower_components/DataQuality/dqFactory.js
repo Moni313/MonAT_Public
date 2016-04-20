@@ -218,14 +218,16 @@ angular.module('dqFactory', [])
                                 return item[variable];
                             }).ToArray();
                         angular.forEach(groups, function (gr) {
-                            row4table.categories.push(gr.source[0][variable]);
+                            if(gr.source[0][variable] != "")
+                                row4table.categories.push(gr.source[0][variable]);
                         });
                     }
                 }
                 row4table.present = countPresent;
                 row4table.missing = countMissing;
 
-                console.log("categories for the ", variable, "variable:\n", row4table.categories);
+                //TODO this is called each time you select a variable in the completeness list of variables. WHY??
+                //console.log("categories for the ", variable, "variable:\n", row4table.categories);
 
                 return row4table;
             },
