@@ -1,10 +1,11 @@
 angular.module('dqFactory', [])
     .factory('dqFactory',function() {
 
-        console.log("factory is called");
+        //console.log("factory is called");
 
 
         var data = {
+
             nameFile: "",
             menuReady: false,
             visualisationReady: false,
@@ -50,8 +51,8 @@ angular.module('dqFactory', [])
                 //}],
 
                 color: {
-                    missing: "#d7b5d8", // "#9ecae1", // "#a1dab4", //"#d7b5d8", //"#6baed6", //
-                    present: "#980043" // "#3182bd" //"#253494" //"#980043" //"#08306b" //
+                    missing: "#9ecae1", // "#a1dab4", //"#d7b5d8", //"#6baed6", // "#d7b5d8", //
+                    present: "#3f007d" //"#3182bd" //"#253494" //"#980043" //"#08306b" // "#980043" //
                 },
                 colorRange: {
                     missing: [
@@ -221,6 +222,5 @@ angular.module('dqFactory', [])
                     else return data.subsetContent;
                 }
         };
-        //console.log("data", data);
         return data;
     });

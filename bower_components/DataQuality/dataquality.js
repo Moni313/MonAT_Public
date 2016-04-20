@@ -4,12 +4,9 @@
 
     var dataQuality = angular.module('dataQuality',
         [
-            //'dqFactory',
             'dqDirective',
             'controllers',
-            //'dqControllers', //TODO delete this when yuo finished the migration
-            'nvd3',
-            //'ui.bootstrap'
+            'nvd3'
         ]
     ).config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('{[{');

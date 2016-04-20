@@ -18,6 +18,27 @@ angular.module('dqDirective', [])
         }
     })
 
+    .directive('ngMenuCorrectness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/correctness.html'
+        }
+    })
+
+    .directive('ngMenuConsistency', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/consistency.html'
+        }
+    })
+
+    .directive('ngMenuCurrency', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/currency.html'
+        }
+    })
+
     .directive('ngPlotInput', function(){
         return {
             restrict: 'E',
@@ -71,7 +92,7 @@ angular.module('dqDirective', [])
     .directive('ngDuplication', function(){
         return {
             restrict: 'E',
-            templateUrl: '/static/templates/menu/duplication.html'
+            templateUrl: '/static/templates/menu/correctness.html'
         }
     })
 
@@ -88,12 +109,6 @@ angular.module('dqDirective', [])
         }
     })
 
-    .directive('ngMenu', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/Menu.html"
-        }
-    })
 
 
 
@@ -101,12 +116,7 @@ angular.module('dqDirective', [])
 
 
 
-    .directive('ngPtsMenu', function(){
-        return {
-            restrict: 'E',
-            templateUrl: '/static/templates/menu/PtsMenu.html'
-        }
-    })
+
 
     .directive('ngListJsonVariables', function(){
         return {
@@ -183,6 +193,8 @@ angular.module('dqDirective', [])
     })
 
 
+
+
     // Attributes
     .directive('onReadFile', function ($parse) {
         return {
@@ -205,8 +217,6 @@ angular.module('dqDirective', [])
                     scope.nameFile = (onChangeEvent.srcElement || onChangeEvent.target).files[0].name;
                     scope.variables =
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
-
-
                 });
             }
         };
