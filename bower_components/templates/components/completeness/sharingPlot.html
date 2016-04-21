@@ -1,7 +1,6 @@
 <div class="row col-md-12">
     <div ng-repeat="variable in variables"
          ng-if="variable.state.show && variable.state.isCategorical">
-        <h5>{[{variable.name}]}</h5>
         <nvd3 options="variable.optionCategorical" data="variable.dataCategorical"></nvd3>
     </div>
 </div>

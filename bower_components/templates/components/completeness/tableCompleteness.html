@@ -47,7 +47,9 @@
             <td><p class="text-right">{[{row.statistics.present}]}</p></td>
             <td><p class="text-right">{[{row.state.categories.length}]}</p></td>
             <td>
-                <ul class="text-center">
+                <a role="button" class="btn-xs" data-toggle="collapse" data-target="#{[{row.name}]}">Toggle</a>
+
+                <ul class="text-center collapse" id="{[{row.name}]}">
                     <li ng-repeat="category in row.state.categories">{[{category}]}</li>
                 </ul>
             </td>

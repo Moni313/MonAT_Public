@@ -1,4 +1,5 @@
 <div ng-repeat="variable in variables"
+     ng-show="showAllSharingAxis"
      ng-if="(variable.name != nameX) && variable.state.show">
     <nvd3 options="variable.optionSharingX" data="variable.dataSharingX"></nvd3>
 </div>

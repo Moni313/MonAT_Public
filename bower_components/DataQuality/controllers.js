@@ -270,8 +270,8 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
         }
 
         $scope.$on('layout', function(){
-            dqFactory.completeness.numericalPlot.width = document.getElementById("outWidthPlot").offsetWidth
-            console.log("width at first run: ", document.getElementById("outWidthPlot").offsetWidth);
+            dqFactory.completeness.numericalPlot.width = document.getElementById("widthPlot").offsetWidth
+            console.log("width at first run: ", document.getElementById("widthPlot").offsetWidth);
             $scope.width = dqFactory.completeness.numericalPlot.width;
             console.log($scope.height);
             $scope.height = dqFactory.completeness.numericalPlot.height;
@@ -702,30 +702,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
 
             $scope.showNumericalPlot = dqFactory.completeness.numericalPlot.showNumericalPlot;
 
-
-
-            //console.log("x? ", dqFactory.completeness.numericalPlot.nameX);
-            //console.log("y? ", $scope.nameY);
-
-            ////for layout ---------------------------------------------------------------------------
-            //$scope.height = dqFactory.completeness.numericalPlot.height;
-            //
-            //
-            //var countSharingAxis = 1;
-            //angular.forEach(dqFactory.completeness.variables, function(variable){
-            //    if(variable.state.show) countSharingAxis += 1;
-            //});
-            //var spanWidth = "col-md-".concat(12 - countSharingAxis);
-            //document.getElementById("widthPlot").className = spanWidth;
-            //var actualWidth = document.getElementById("widthPlot").offsetWidth;
-            //if(actualWidth != 0) dqFactory.completeness.numericalPlot.width = actualWidth;
-            //
-            //$scope.width = actualWidth;
-            //console.log("actualWidth", actualWidth);
-            //// end for layout ----------------------------------------------------------------------
-
             setLayout();
-
 
             var title = $scope.nameX.concat(" vs ")
                 .concat($scope.nameY);
@@ -788,7 +765,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                 },
                 subtitle: {
                     enable: true,
-                    text: "Login AND of selected variable for missingnes",
+                    text: "Logic AND of selected variable for missingnes",
                     class: {
                         textAlign: "center"
                     }
@@ -802,6 +779,8 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
 
             $scope.sharingAxis();
             //$log.debug("listDataVariables ", $rootScope.listDataVariables);
+
+            $scope.showAllSharingAxis = dqFactory.completeness.numericalPlot.showAllSharingAxis;
 
         });
 
@@ -860,16 +839,21 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
             $scope.$emit('refreshPlot');
         };
 
-        $scope.$on('refreshPMColor', function(){
-            angular.forEach($scope.variable, function(variable){
-                if(variable.dataSharingX)
-                    variable.optionSharingX.chart.color = dqFactory.completeness.color;
-                if(variable.dataSharingY)
-                    variable.optionSharingY.chart.color = dqFactory.completeness.color;
-                if(variable.dataCategorical)
-                    variable.optionCategorical.chart.color = dqFactory.completeness.color;
-            });
-        });
+        $scope.toggleAllSharingAxis = function () {
+            dqFactory.completeness.numericalPlot.showAllSharingAxis = !dqFactory.completeness.numericalPlot.showAllSharingAxis;
+            console.log($scope.showAllSharingAxis);
+        };
+
+        //$scope.$on('refreshPMColor', function(){
+        //    angular.forEach($scope.variable, function(variable){
+        //        if(variable.dataSharingX)
+        //            variable.optionSharingX.chart.color = dqFactory.completeness.color;
+        //        if(variable.dataSharingY)
+        //            variable.optionSharingY.chart.color = dqFactory.completeness.color;
+        //        if(variable.dataCategorical)
+        //            variable.optionCategorical.chart.color = dqFactory.completeness.color;
+        //    });
+        //});
 
 
         // for each record all the selected variables have to miss the value
@@ -910,7 +894,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             && item.name != $scope.nameY) {
                             //check missing value in the actual record
                             if (item.state.selected && item.state.show) {
-                                console.log("checking value for ", item.name);
+                                //console.log("checking value for ", item.name);
                                 if (dqFactory.hasMeaningValue(entry[item.name])) {
                                     presentInAnd = false;
                                 }
@@ -947,7 +931,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                     }
                 }
             });
-            console.log("data missing/present: ", data);
+            //console.log("data missing/present: ", data);
             return data;
         }
 
@@ -1090,7 +1074,6 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                         chart: {
                             type: 'historicalBarChart',
                             height: 150,
-                            width: $scope.optionPlot.chart.width,
                             margin: {
                                 //top: 20,
                                 right: 20,
@@ -1119,7 +1102,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             //    rotateLabels: 30,
                             //    showMaxMin: true
                             //},
-                            xDomain: $scope.optionPlot.chart.xDomain,
+                            //xDomain: $scope.optionPlot.chart.xDomain,
                             xAxis: $scope.optionPlot.chart.xAxis,
                             yAxis: {
                                 axisLabel: variable.name,
@@ -1150,6 +1133,9 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             }
                         }
                     };
+                    optionSharingX.chart.xDomain = $scope.optionPlot.chart.xDomain;
+                    optionSharingX.chart.yDomain = $scope.optionPlot.chart.yDomain;
+                    optionSharingX.chart.width = $scope.optionPlot.chart.width;
 
                     //horizontal bar chart, sharing y
                     var optionSharingY = {
@@ -1157,7 +1143,6 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             type: 'multiBarHorizontalChart',
                             height: $scope.optionPlot.chart.height,
                             width: 80,
-                            //color: d3.scale.category10().range(),
                             margin: {
                                 left: 0
                             },
@@ -1207,8 +1192,8 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             scatter: {
                                 onlyCircles: false
                             },
-                            showDistX: true,
-                            showDistY: true,
+                            showDistX: false,
+                            showDistY: false,
                             showLegend: true,
                             //tooltipContent: function(d) {
                             //    return d.series && '<h3>' + d.series[0].key + '</h3>';
@@ -1242,16 +1227,23 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                         },
                         title: {
                             enable: true,
-                            text: variable.variable,
+                            text: variable.name,
                             className: "h5"
                         },
                         subtitle: {
-                    enable: true,
-                    text: "Present and Missing values for the ".concat(variable.name).concat(" variable"),
-                    class: {
-                        textAlign: "left"
-                    }
-                }
+                            enable: true,
+                            text: "Categories for the "
+                                .concat(variable.name)
+                                .concat(" variable, related to the ")
+                                .concat(dqFactory.completeness.numericalPlot.nameX)
+                                .concat(" vs ")
+                                .concat(dqFactory.completeness.numericalPlot.nameY)
+                                .concat(" plot"),
+                            class: {
+                                textAlign: "left"
+                            },
+                            className: "h5"
+                        }
                     };
                     optionCategorical.chart.xDomain = $scope.optionPlot.chart.xDomain;
                     optionCategorical.chart.yDomain = $scope.optionPlot.chart.yDomain;

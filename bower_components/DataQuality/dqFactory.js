@@ -93,6 +93,7 @@ angular.module('dqFactory', [])
                     height: 350,
                     width: 0,
                     showNumericalPlot: false,
+                    showAllSharingAxis: true,
 
                     sizeSinglePoint: 0.1,
 
@@ -102,15 +103,8 @@ angular.module('dqFactory', [])
                         present: 'triangle-up',
                         circle: 'circle'
                     },
-                    markerImage: {
-                        present: "/static/myImg/triangle-up.png",
-                        missing: "/static/myImg/triangle-down.png"
-                        //circleMarker: "/static/myImg/circle.png",
-                    },
-
 
                     //data for plot of numerical variables XY
-                    //{key: 'XY', color: $rootScope.colorRange.present[0], values: []}
                     data: [],
                     //{
                     //    key: "",
