@@ -89,7 +89,8 @@ angular.module('dqFactory', [])
                     //shapes : ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square'], //[0,5]
                     marker: {
                         missing: 'triangle-down',
-                        present: 'triangle-up'
+                        present: 'triangle-up',
+                        circle: 'circle'
                     },
                     markerImage: {
                         present: "/static/myImg/triangle-up.png",
@@ -235,7 +236,18 @@ angular.module('dqFactory', [])
             getActualContent: function (){
                     if(data.subsetContent.length <= 0) return data.content;
                     else return data.subsetContent;
+                },
+
+            hasMeaningValue: function(variable){
+                if (variable === null
+                    || variable === ""
+                    || variable === "NaN"
+                    || variable === ''
+                    || variable === undefined) {
+                    return false;
                 }
+                else return true;
+            }
         };
         return data;
     });

@@ -752,8 +752,8 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                     scatter: {
                         onlyCircles: false
                     },
-                    showDistX: true,
-                    showDistY: true,
+                    showDistX: false,
+                    showDistY: false,
                     showLegend: true,
                     //tooltipContent: function(d) {
                     //    return d.series && '<h3>' + d.series[0].key + '</h3>';
@@ -792,7 +792,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                 },
                 subtitle: {
                     enable: true,
-                    text: "XY are present points for x and y variables. All the others variables show missing values",
+                    text: "Login AND of selected variable",
                     class: {
                         textAlign: "center"
                     }
@@ -800,7 +800,8 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
             };
 
             //var now1 = new Date();
-            $scope.dataPlot = settingData();
+            //$scope.dataPlot = settingData();
+            $scope.dataPlot = missingLogicAND();
 
 
             $scope.sharingAxis();
@@ -873,6 +874,87 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                     variable.optionCategorical.chart.color = dqFactory.completeness.color;
             });
         });
+
+
+        // for each record all the selected variables have to miss the value
+        // if all the variables have missing value, we push in data[1] which represents missingness
+        // else we push in data[0] which satisfy completeness
+        function missingLogicAND(){
+            var data = [];
+            $scope.nameX = dqFactory.completeness.numericalPlot.nameX;
+            $scope.nameY = dqFactory.completeness.numericalPlot.nameY;
+
+            var actualContent = dqFactory.getActualContent();
+
+            $scope.optionPlot.chart.xDomain = getRange(actualContent, $scope.nameX);
+            $scope.optionPlot.chart.yDomain = getRange(actualContent, $scope.nameY);
+
+            data.push({key: "Present", color: dqFactory.completeness.color.present, values: []});
+            data.push({key: "Missing", color: dqFactory.completeness.color.missing, values: []});
+
+
+            //checking variable.show
+            var noneShow = true;
+            angular.forEach(dqFactory.completeness.variables, function (item) {
+                if(item.state.show) noneShow = false;
+            });
+
+
+
+            angular.forEach(actualContent, function (entry) {
+
+                if (dqFactory.hasMeaningValue(entry[$scope.nameX]) &&
+                    dqFactory.hasMeaningValue(entry[$scope.nameY])) {
+
+                    var presentInAnd = true;
+
+                    angular.forEach(dqFactory.completeness.variables, function (item) {
+                            //skip x and y
+                        if (item.name != $scope.nameX
+                            && item.name != $scope.nameY) {
+                            //check missing value in the actual record
+                            if (item.state.selected && item.state.show) {
+                                console.log("checking value for ", item.name);
+                                if (dqFactory.hasMeaningValue(entry[item.name])) {
+                                    presentInAnd = false;
+                                }
+                            }
+                        }
+                    });
+
+
+                    //case: the selected variables are not checked to be shown
+                    if(noneShow){
+                        data[0].values.push({
+                            x: entry[$scope.nameX],
+                            y: entry[$scope.nameY],
+                            size: dqFactory.completeness.numericalPlot.sizeSinglePoint,
+                            shape: dqFactory.completeness.numericalPlot.marker.circle
+                        });
+                    }
+                    //case: some of the selected variables are checked to be shown
+                    else if(presentInAnd){
+                        data[1].values.push({
+                            x: entry[$scope.nameX],
+                            y: entry[$scope.nameY],
+                            size: dqFactory.completeness.numericalPlot.sizeSinglePoint,
+                            shape: dqFactory.completeness.numericalPlot.marker.circle
+                        });
+                    }
+                    else {
+                        data[0].values.push({
+                            x: entry[$scope.nameX],
+                            y: entry[$scope.nameY],
+                            size: dqFactory.completeness.numericalPlot.sizeSinglePoint,
+                            shape: dqFactory.completeness.numericalPlot.marker.circle
+                        })
+                    }
+                }
+            });
+            console.log("data missing/present: ", data);
+            return data;
+        }
+
 
         function settingData() {
             var data = [];
