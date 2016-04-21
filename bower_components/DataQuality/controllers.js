@@ -54,6 +54,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
         });
         $scope.$on('refreshPresentMissingColor', function(){
             $scope.$broadcast('refreshPMColor');
+            $scope.$broadcast('refreshPlot');
         });
         $scope.$on('startPlotVis', function () {
             console.log("broadcast plot");
@@ -240,8 +241,8 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
          * Event: set color to default value and call the redraw event
         **/
         $scope.completenessResetColor = function(){
-            dqFactory.completeness.color.present = "#08306b"; // "#3182bd"; //"#980043"; //"#08306b"; //
-            dqFactory.completeness.color.missing = "#3f007d"; //"#6baed6"; //"#9ecae1"; //"#d7b5d8"; //"#6baed6"; //"#d7b5d8";
+            dqFactory.completeness.color.present = "#d95f02";
+            dqFactory.completeness.color.missing = "#7570b3";
             $scope.colorPresent = dqFactory.completeness.color.present;
             $scope.colorMissing = dqFactory.completeness.color.missing;
             $scope.$emit('refreshPresentMissingColor');
@@ -694,10 +695,6 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
     //content
     .controller('plotCtrl', ['$scope', 'dqFactory', function($scope, dqFactory){
 
-        $scope.presentImage = dqFactory.completeness.numericalPlot.markerImage.present;
-        $scope.missingImage = dqFactory.completeness.numericalPlot.markerImage.missing;
-
-
         $scope.$on('refreshPlot', function() {
             $scope.variables = dqFactory.completeness.variables;
             $scope.nameX = dqFactory.completeness.numericalPlot.nameX;
@@ -730,7 +727,6 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
             setLayout();
 
 
-            //TODO legend is hardcoded for missing/present markers encode
             var title = $scope.nameX.concat(" vs ")
                 .concat($scope.nameY);
 
@@ -792,7 +788,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                 },
                 subtitle: {
                     enable: true,
-                    text: "Login AND of selected variable",
+                    text: "Login AND of selected variable for missingnes",
                     class: {
                         textAlign: "center"
                     }
@@ -1007,7 +1003,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             x: entry[$scope.nameX],
                             y: entry[$scope.nameY],
                             size: dqFactory.completeness.numericalPlot.sizeSinglePoint,
-                            shape: dqFactory.completeness.numericalPlot.marker.present
+                            shape: "circle"
                         }
                     );
 
@@ -1028,7 +1024,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                                             x: entry[$scope.nameX],
                                             y: entry[$scope.nameY],
                                             size: dqFactory.completeness.numericalPlot.sizeSinglePoint,
-                                            shape: dqFactory.completeness.numericalPlot.marker.missing
+                                            shape: "circle"
                                         }
                                     )
                                 }
@@ -1161,7 +1157,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             type: 'multiBarHorizontalChart',
                             height: $scope.optionPlot.chart.height,
                             width: 80,
-                            color: d3.scale.category10().range(),
+                            //color: d3.scale.category10().range(),
                             margin: {
                                 left: 0
                             },
@@ -1207,7 +1203,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             type: 'scatterChart',
                             height: $scope.optionPlot.chart.height,
                             //width: dqFactory.completeness.numericalPlot.width,
-                            color: dqFactory.completeness.colorRange.missing, //d3.scale.category10().range(), //TODO
+                            color: dqFactory.completeness.colorRange.present, //d3.scale.category10().range(), //TODO
                             scatter: {
                                 onlyCircles: false
                             },
@@ -1302,7 +1298,10 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                     var range = getRange(actualContent, respectToVar);
                     var index = 0;
                     for(index; index < range.max; index = index+0.01){
-                        resultData.push({key: index, count: 0})
+                        resultData.push({
+                            key: index,
+                            color: dqFactory.completeness.color.present,
+                            count: 0})
                     }
                     return resultData;
                 }
@@ -1442,12 +1441,13 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                             || i[variable] === ''
                             || i[variable] === "NaN"
                             || i[variable] === undefined) {
-                            data[index].key = "Null",
+                            data[index].key = "Null";
+                            data[index].color = dqFactory.completeness.color.missing;
                             data[index].values.push({
                                 x: i[$scope.nameX],
                                 y: i[$scope.nameY],
                                 size: dqFactory.completeness.numericalPlot.sizeSinglePoint,
-                                shape: dqFactory.completeness.numericalPlot.marker.missing
+                                shape: "circle"
                             })
                         }
                         else {
@@ -1455,7 +1455,7 @@ var controllers = angular.module('controllers', ['ui.bootstrap', 'dqFactory'])
                                 x: i[$scope.nameX],
                                 y: i[$scope.nameY],
                                 size: dqFactory.completeness.numericalPlot.sizeSinglePoint,
-                                shape: dqFactory.completeness.numericalPlot.marker.present
+                                shape: "circle"
                             })
                         }
                     }

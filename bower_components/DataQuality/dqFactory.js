@@ -51,30 +51,40 @@ angular.module('dqFactory', [])
                 //}],
 
                 color: {
-                    missing: "#9ecae1", // "#a1dab4", //"#d7b5d8", //"#6baed6", // "#d7b5d8", //
-                    present: "#3f007d" //"#3182bd" //"#253494" //"#980043" //"#08306b" // "#980043" //
+                    missing: "#7570b3",
+                    present: "#d95f02"
                 },
                 colorRange: {
-                    missing: [
-                        "#08306b",
-                        "#9ecae1",
-                        "#08519c",
-                        "#6baed6",
-                        "#2171b5",
-                        "#4292c6"
-                    ],
+                    //missing: [
+                    //    "#08306b",
+                    //    "#9ecae1",
+                    //    "#08519c",
+                    //    "#6baed6",
+                    //    "#2171b5",
+                    //    "#4292c6"
+                    //],
                     present: [
-                        "#3f007d",
-                        "#bcbddc",
-                        "#54278f",
-                        "#9e9ac8",
-                        "#6a51a3",
-                        "#807dba"
+                        "#a6cee3",
+                        "#1f78b4",
+                        "#b2df8a",
+                        "#33a02c",
+                        "#993404",
+                        "#252525",
+                        "#fe9929",
+                        "#969696",
+                        "#ffeda0",
+                        "#d9d9d9",
+                        "#7a0177",
+                        "#f768a1",
+                        "#fde0dd",
+                        "#084081",
+                        "#4eb3d3",
+                        "#e0f3db"
                     ]
                 },
 
                 table: [], //TODO is this used?
-                barChartShow: false, //chartStpVars TODO delete comment
+                barChartShow: false,
 
                 numericalPlot: {
                     nameX: "",
@@ -82,7 +92,7 @@ angular.module('dqFactory', [])
                     title: "",
                     height: 350,
                     width: 0,
-                    showNumericalPlot: false, //stpPlotReady TODO delete comment
+                    showNumericalPlot: false,
 
                     sizeSinglePoint: 0.1,
 
