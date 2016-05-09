@@ -10,10 +10,14 @@
         <div>
             <h6>File chosen: {[{nameFile}]}</h6>
         </div>
+
+        <!-- response: {[{PostDataResponse}]}
+        details: {[{ResponseDetails}]} -->
+
     </div>
 
 
-    <div class="col-md-5 well-sm" ng-controller="revisionCtrl" ng-show="ready">
+    <div class="col-md-5 well-sm" ng-controller="revisionCtrl" ng-show="doShow">
         <uib-pagination
                 total-items="bigTotalItems"
                 ng-model="bigCurrentItem"
@@ -25,8 +29,7 @@
     </div>
 
 
-
-    <div class="col-md-2 well-sm">
+    <div class="col-md-2 well-sm" ng-show="doShow">
         <button class="btn btn-default btn-sm" type="submit">Save State</button>
     </div>
 </div>

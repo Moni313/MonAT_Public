@@ -1,10 +1,10 @@
 <!-- TODO put this collapsing right as vertical menu-->
 
 <div class="row div_space">
-    <label class="btn-xs">
+    <label class="btn-xs">Share Axis
         <input type="checkbox"
                ng-model="showAllSharingAxis"
-               ng-click="toggleAllSharingAxis()"> </input> Share Axis |
+               ng-click="toggleAllSharingAxis()"> </input>  |
     </label>
     <label class="btn-xs"
            ng-repeat="variable in variables" ng-if="variable.state.selected">
@@ -13,5 +13,19 @@
                ng-click="showSharingAxis()">
          </input> {[{variable.name}]}
     </label>
+
+    <div class="pull-right">
+        <form name="logic"> |
+            <label>
+                <input type="radio" ng-model="logicEvaluation" value="AND" ng-click="logicEval()">
+                AND
+            </label>
+            <label>
+                <input type="radio" ng-model="logicEvaluation" value="OR" ng-click="logicEval()">
+                OR
+            </label>
+
+        </form>
+    </div>
 </div>
 

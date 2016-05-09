@@ -125,6 +125,13 @@ angular.module('dqDirective', [])
         }
     })
 
+    .directive('ngSqlCompleteness', function () {
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/completeness/sqlQuery.html"
+        }
+    })
+
     .directive('ngRefreshBarChart', function(){
         return {
             restrict: 'E',

@@ -1,0 +1,79 @@
+<div ng-controller="sqlCtrl">
+    <hr>
+    <h5>Query</h5>
+    <div>
+        <label class="btn-default btn-xs" for="sqlS">Select: </label>
+        <a role="button" ng-click="resetSqlSelect()" class="btn-xs pull-right">Reset</a>
+        <br>
+        <select name="sqlS" ng-model="sqlSelect">
+            <option ng-repeat="variable in variables">{[{variable.name}]}</option>
+        </select>
+    </div>
+
+
+
+    <div ng-show="sqlSelect !=''">
+        <br>
+        <div ng-show="typeOfSelected === 'c'">
+            <select ng-model="sqlCompareMethod">
+                <option ng-repeat="method in sqlCompareCategorical">
+                    {[{method}]}
+                </option>
+            </select>
+        </div>
+        <div ng-show="typeOfSelected === 'n'">
+            <select ng-model="sqlCompareMethod">
+                <option ng-repeat="method in sqlCompareNumerical">
+                    {[{method}]}
+                </option>
+            </select>
+        </div>
+        <div ng-show="typeOfSelected === 'i'">
+            <select ng-model="sqlCompareMethod">
+                <option ng-repeat="method in sqlCompareIndex">
+                    {[{method}]}
+                </option>
+            </select>
+        </div>
+        <div ng-show="typeOfSelected === 'nt'">
+            <select ng-model="sqlCompareMethod">
+                np
+            </select>
+        </div>
+
+    <br>
+
+
+        <a role="button" ng-click="resetSqlSelectValue()" class="btn-xs pull-right">Reset</a>
+        <select name="sqlSV" ng-model="sqlSelectValue">
+            <option ng-repeat="value in sqlSelectValues">{[{value}]}</option>
+        </select>
+
+        <br>
+        <button type="button" ng-click="sqlVisualise()" class="btn btn-default btn-xs">Select</button>
+        <br>
+    </div>
+<!--
+    <br>
+
+    <div ng-show="sqlSelectValue != ''">
+        <label class="btn-default btn-xs" for="sqlW">Where: </label>
+        <a role="button" ng-click="resetSqlWhere()" class="btn-xs pull-right">Reset</a>
+        <br>
+        <select name="sqlW" ng-model="sqlWhere">
+            <option ng-repeat="var in variables">{[{var.name}]}</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div ng-show="sqlWhere !=''">
+        <label class="btn-default btn-xs" for="sqlWV">Select: </label>
+        <a role="button" ng-click="resetSqlWhereValue()" class="btn-xs pull-right">Reset</a>
+        <br>
+        <select name="sqlWV" ng-model="sqlWhereValue">
+            <option ng-repeat="cat in whereCategories">{[{cat}]}</option>
+        </select>
+    </div> -->
+
+</div>

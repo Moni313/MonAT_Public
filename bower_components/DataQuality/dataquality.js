@@ -5,7 +5,7 @@
     var dataQuality = angular.module('dataQuality',
         [
             'dqDirective',
-            'controllers',
+            'dqControllers',
             'nvd3'
         ]
     ).config(function($interpolateProvider) {

@@ -1,12 +1,11 @@
 <!-- if completeness -->
-<dif>
-<div ng-controller="plotCtrl" id="outWidthPlot">
-
+<div>
+<div ng-controller="plotCtrl">
     <!-- plot and bottom/left -->
     <div ng-show="showNumericalPlot">
 
         <!-- <p id="timeExe"></p> -->
-        <div class="row col-md-12" id="widthPlot">
+        <div class="row col-md-12">
 
             <ng-contextual-menu></ng-contextual-menu>
 
@@ -26,7 +25,7 @@
 
         </div>
     </div>
-    <div class="row div_space col-md-12"></div>
+    <div class="row div_space col-md-12" ng-show="showNumericalPlot"></div>
 </div>
     <!-- end plot and bottom/left -->
 
@@ -42,6 +41,8 @@
                   options="optionsMultiBarHorizontalChartCompleteness"
                   data="dataMultiBarHorizontalChartCompleteness">
             </nvd3>
+            <br>
+            <button type="button" ng-click="restart()" class="btn btn-default btn-xs pull-left">Restart</button>
         </div>
         <div class="col-md-6">
             <p>Numbers of row uploaded: {[{sizeContent}]}</p>
@@ -50,23 +51,9 @@
             <ng-table-completeness></ng-table-completeness>
             <!-- end table -->
         </div>
-        <!-- sunburst
-        <div class="row">
-            <!--
-            <nvd3 class="col-md-6" config="{deepWatchData: true, refreshDataOnly: false}"
-                  options="optionsSunburstCompleteness"
-                  data="dataSunburstCompleteness"></nvd3>
-
-            <div class="col-md-6">
-                    <h4>Actions:<br></h4>
-                <div ng-repeat="action in actions">
-                    <a class=" well-sm btn-default btn-xs">{[{action.key}]} {[{action.label}]}</a></div>
-            </div>
-        </div>
-            <!-- end sunburst -->
     </div>
 </div>
-</dif>
+</div>
     <!-- end horizontal bar chart, sunburst, table -->
 
 

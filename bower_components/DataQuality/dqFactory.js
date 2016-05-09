@@ -6,6 +6,7 @@ angular.module('dqFactory', [])
 
         var data = {
 
+            doShow: false,
             nameFile: "",
             menuReady: false,
             visualisationReady: false,
@@ -86,6 +87,23 @@ angular.module('dqFactory', [])
                 table: [], //TODO is this used?
                 barChartShow: false,
 
+                sql: {
+                    select: "",
+                    selectValue: "",
+                    where: "",
+                    whereValue: "",
+                    compareCategorical: {
+                        equal: "=",
+                        notEqual: "!="
+                    },
+                    compareNumerical: {
+                        equal: "=",
+                        major: ">",
+                        minor: "<",
+                        notEqual: "!="
+                    }
+                },
+
                 numericalPlot: {
                     nameX: "",
                     nameY: "",
@@ -94,6 +112,7 @@ angular.module('dqFactory', [])
                     width: 0,
                     showNumericalPlot: false,
                     showAllSharingAxis: true,
+                    logicEvaluation: 'AND',
 
                     sizeSinglePoint: 0.1,
 
