@@ -853,7 +853,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                 },
                 subtitle: {
                     enable: true,
-                    text: "Logic AND of selected variable for missingnes",
+                    text: "Logic ".concat($scope.logicEvaluation).concat(" for missingnes"),
                     class: {
                         textAlign: "center"
                     }

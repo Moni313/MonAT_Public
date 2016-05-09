@@ -20,7 +20,7 @@
 
 .div_space{
     height: 25px;
-    border-bottom: groove gray 2px;
+    border-bottom: groove #f5f5f5 1px;
     margin-bottom: 25px;
 }
 
@@ -143,5 +143,25 @@
 }
 
 .borderleft{
-    border-left: groove gray 2px;
+    border-left: groove lightgray 2px;
+}
+
+h5 {
+    font-style: italic;
+    font-weight: bold;
+}
+hr {
+    height: 2px;
+}
+
+td.cell:last-child {
+    width: 100%;
+}
+
+td.cellIndex:first-child {
+    width: 100%;
+}
+
+td.cellNumerical:first-child {
+    width: 100%;
 }
