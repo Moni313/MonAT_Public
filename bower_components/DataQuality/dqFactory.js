@@ -15,16 +15,11 @@ angular.module('dqFactory', [])
             subsetContent: [],
             sizeContent: 0,
 
-            revision: {
-                ready : true,
-                index: 0
-            },
+            interactions: [],
 
             //store selected variables in the menu
             completeness: {
                 underInvestigation: false,
-                //TODO height and width
-
                 title: "Completeness",
                 allSelected: false,
                 variables: [],
@@ -84,7 +79,7 @@ angular.module('dqFactory', [])
                     ]
                 },
 
-                table: [], //TODO is this used?
+                //table: [], //TODO is this used?
                 barChartShow: false,
 
                 sql: {
@@ -166,15 +161,7 @@ angular.module('dqFactory', [])
                             }]
                         }
                     }
-                ],
-
-
-                interactions: {
-                    index: 0,
-                    initialSelection: [],
-                    actions: []
-                }
-
+                ]
             },
 
             //calculate missing/present and statistical information for a given variable
@@ -255,12 +242,10 @@ angular.module('dqFactory', [])
 
                 return row4table;
             },
-
             getActualContent: function (){
                     if(data.subsetContent.length <= 0) return data.content;
                     else return data.subsetContent;
                 },
-
             hasMeaningValue: function(variable){
                 if (variable === null
                     || variable === ""
@@ -270,7 +255,90 @@ angular.module('dqFactory', [])
                     return false;
                 }
                 else return true;
+            },
+
+            store: function(){
+                data.interactions.push({
+                    step: data
+                });
             }
+
+            // storeCompleteness: function(interaction, value){
+            //
+            //     switch(interaction){
+            //         case "selection":
+            //             console.log("Inserting selection");
+            //
+            //             if(!data.interactions.steps){
+            //                 //initialisation
+            //                 data.interactions.fileName = data.nameFile;
+            //                 data.interactions.steps = [];
+            //             }
+            //
+            //
+            //             if(data.interactions.steps.length == 0){
+            //                 //first interaction
+            //                 data.interactions.steps.push({
+            //                         index: 0,
+            //                         completeness: {
+            //                             varsSelected: [],
+            //                             varsShown: [],
+            //                             actions: []
+            //                         }
+            //                     }
+            //                 );
+            //
+            //                 angular.forEach(data.completeness.variables, function(variable){
+            //
+            //                     if(variable.state.selected) {
+            //                         data.interactions.steps[0].completeness.varsSelected.push(variable.name);
+            //                     }
+            //                     if(variable.state.show){
+            //                         data.interactions.steps[0].completeness.varsShown.push(variable.name);
+            //                     }
+            //                 });
+            //             }
+            //
+            //             else{
+            //                 var lastInteraction = data.interactions.steps[data.interactions.steps.length - 1].index;
+            //                 console.log(lastInteraction);
+            //
+            //                 data.interactions.steps.push({
+            //                     index: lastInteraction + 1,
+            //                     completeness: {
+            //                         varsSelected: [],
+            //                         varsShown: [],
+            //                         actions: []
+            //                     }
+            //                 });
+            //
+            //                 angular.forEach(data.completeness.variables, function(variable) {
+            //
+            //                     data.interactions.steps[lastInteraction + 1].index = lastInteraction + 1;
+            //                     if(variable.state.selected) {
+            //                         data.interactions.steps[lastInteraction + 1].completeness.varsSelected.push(variable.name);
+            //                     }
+            //                     if(variable.state.show){
+            //                         data.interactions.steps[lastInteraction + 1].completeness.varsShown.push(variable.name);
+            //                     }
+            //                 });
+            //             }
+            //
+            //             console.log("Interactions ", data.interactions);
+            //
+            //             break;
+            //         case "action":
+            //             console.log("Inserting action");
+            //             data.interactions.
+            //                 steps[data.interactions.steps.length - 1].completeness.actions.push(value);
+            //             break;
+            //         default:
+            //             console.log("Something went wrong while trying to store interaction");
+            //             break;
+            //     }
+            //
+            // }
         };
+
         return data;
     });

@@ -6,7 +6,7 @@
         [
             'dqDirective',
             'dqControllers',
-            'nvd3'
+            'nvd3',
         ]
     ).config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('{[{');

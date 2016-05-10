@@ -58,20 +58,49 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.$broadcast('refreshPlot');
         });
         $scope.$on('startPlotVis', function () {
-            console.log("broadcast plot");
+            //console.log("broadcast plot");
             $scope.$broadcast('refreshPlot');
         });
         $scope.$on('resetPlot', function(){
             dqFactory.completeness.numericalPlot.showNumericalPlot = false;
             $scope.$broadcast('emptyPlot');
         });
-        $scope.$on('refreshLayout', function(){
-            $scope.$broadcast('layout');
-        });
+
         $scope.$on('resetVarPlot', function(){
             $scope.$broadcast('resetVar');
-        })
+        });
 
+
+
+        $scope.saveToPc = function () {
+
+            var data = dqFactory.getActualContent();
+            var filename = dqFactory.nameFile;
+
+            if (!data) {
+                console.error('No data');
+                return;
+            }
+
+            if (!filename) {
+                filename = 'MonAT_download.json';
+            }
+            else filename = "MonAT_".concat(filename);
+
+            if (typeof data === 'object') {
+                data = JSON.stringify(data, undefined, 2);
+            }
+
+            var blob = new Blob([data], {type: 'text/json'}),
+            e = document.createEvent('MouseEvents'),
+            a = document.createElement('a');
+
+            a.download = filename;
+            a.href = window.URL.createObjectURL(blob);
+            a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+            e.initEvent('click', true, false); //window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            a.dispatchEvent(e);
+        };
     }])
 
 
@@ -83,8 +112,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
     **/
     .controller('fileCtrl', ['$http', '$scope', 'dqFactory', function ($http, $scope, dqFactory) {
         $scope.showContent = function ($fileContent) {
-
-            dqFactory
 
             dqFactory.content = JSON.parse($fileContent).entries; //TODO the .entries is due to the transformation of the csv to the json by python
             dqFactory.completeness.underInvestigation = true;
@@ -100,7 +127,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
 
         //first instances of tableCompleteness
-        //get variables and set the table with completeness information for each variable
+        /**
+         * set completeness information for each variable (name, statistics, state)
+         * @param variables array list
+         */
         function tableCompleteness(variables) {
             angular.forEach(variables, function (variable) {
 
@@ -154,10 +184,12 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             });
             //console.log("variables", dqFactory.completeness.variables);
         }
+
+
     }])
 
     .controller('revisionCtrl', function($scope, dqFactory, $log){
-        $scope.ready = dqFactory.revision.ready;
+        //$scope.ready = dqFactory.revision.ready;
         $scope.totalItems = 1;
         $scope.currentInteraction = 1;
 
@@ -267,7 +299,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
         $scope.startPlot = function(){
             dqFactory.completeness.numericalPlot.height = $scope.height;
-            console.log("emit plot");
             dqFactory.completeness.numericalPlot.showNumericalPlot = true;
             $scope.$emit('startPlotVis');
         }
@@ -622,10 +653,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
             else if(key === "missing"){
                 //add a new ring to the sunburst and set the number of ring
-                dqFactory.completeness.interactions.actions.push(
-                    //{key: key, label: variableSelected, index: sunburstRing}
-                    {key: key, label: variableSelected}
-                );
+                //dqFactory.storeCompleteness("action", {key: key, label: variableSelected});
+                dqFactory.store();
                 //dqFactory.completeness.sunburst.ring = sunburstRing + 1;
 
 
@@ -647,7 +676,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.sizeSubset = dqFactory.subsetContent.length;
             tableCompletenessSelected();
         }
-
+        
 
 
         $scope.optionsMultiBarHorizontalChartCompleteness = {
@@ -689,8 +718,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                                     //$scope.dataSunburstCompleteness = sbc((e.data.label).toLowerCase(), (e.data.key).toLowerCase());
 
                                     $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
-                                    $scope.interactions = dqFactory.completeness.interactions;
-                                    console.log("interactions:", $scope.interactios);
+                                    //$scope.interactions = dqFactory.interactions;
+                                    //console.log("interactions:", $scope.interactions);
                                 });
                             }
                         },
@@ -738,20 +767,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
             $scope.barChartShow = dqFactory.completeness.barChartShow;
 
-            angular.forEach($scope.variables, function(variable){
-                if(variable.state.selected){
+            //dqFactory.storeCompleteness("selection");
+            dqFactory.store();
 
-                    if(dqFactory.completeness.numericalPlot.showNumericalPlot){
-                        //TODO refresh all the charts
-                    }
-
-                    dqFactory.completeness.interactions.initialSelection.push(variable.name);
-                }
-            });
-
-            $scope.interactions = dqFactory.completeness.interactions;
-
-            //dqFactory.completeness.numericalPlot.width = document.getElementById("widthPlot").offsetWidth;
         });
 
         $scope.$on('emptyBarChart', function(){
@@ -799,7 +817,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
             var title = $scope.nameX.concat(" vs ").concat($scope.nameY);
 
-            console.log(title);
+            //console.log(title);
 
 
             $scope.height = dqFactory.completeness.numericalPlot.height;
@@ -808,7 +826,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                 chart: {
                     type: 'scatterChart',
                     height: $scope.height,
-                    //width: $scope.width,
                     color: dqFactory.completeness.colorRange.present, //d3.scale.category10().range(), //TODO
                     scatter: {
                         onlyCircles: false
@@ -864,14 +881,18 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
             $scope.dataPlot = missingLogicEvaluation();
 
-            setLayout();
+
             sharingAxis();
+            var countSharingAxis = setLayout();
+            console.log("number of left charts: ", countSharingAxis);
+            if(countSharingAxis == 0){
+                $scope.optionPlot.chart.width = '100vw';
+            }
 
         });
 
         function setLayout(){
             $scope.height = dqFactory.completeness.numericalPlot.height;
-
             //count number of left column. Max left column=10
             //you can show 10 variables at time
             var countSharingAxis = 0;
@@ -888,18 +909,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                 });
             }
 
-
             document.getElementById("onlyMainPlotAndBottom").className = "col-md-".concat(12 - countSharingAxis);
-
-            //var actualWidth = document.getElementById("onlyMainPlotAndBottom").offsetWidth;
-            //
-            //if(actualWidth != 0) {
-            //    dqFactory.completeness.numericalPlot.width = actualWidth;
-            //    $scope.optionPlot.chart.width = dqFactory.completeness.numericalPlot.width
-            //}
-            //
-            //console.log("actualWidth", actualWidth);
-            $scope.$emit('refreshLayout');
+            return countSharingAxis;
         }
 
         $scope.$on('emptyPlot', function(){
@@ -1016,7 +1027,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
             else { //more than one, we need to make AND/OR visualisation
                 if($scope.logicEvaluation === "AND") {
-                    console.log("Data in AND");
+                    //console.log("Data in AND");
                     angular.forEach(actualContent, function (entry) {
 
                         //calculate only if x an y are not missing
@@ -1035,7 +1046,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                                     control = false; //necessary to stop like break because if the last is true but in the middle we have a false we lost it
                                 }
                                 if (controlIndex == show.length-1) {
-                                    console.log("end forEach");
+                                    //console.log("end forEach");
                                     control = false;
                                 }
                                 controlIndex += 1;
@@ -1063,7 +1074,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                     })
                 }
                 else if($scope.logicEvaluation === "OR") {
-                    console.log("Data in OR");
+                    //console.log("Data in OR");
                     angular.forEach(actualContent, function (entry) {
 
                         //calculate only if x an y are not missing
@@ -1082,7 +1093,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                                     control = false; //necessary to stop like break because if the last is true but in the middle we have a false we lost it
                                 }
                                 if (controlIndex == show.length-1) {
-                                    console.log("end forEach");
+                                    //console.log("end forEach");
                                     control = false;
                                 }
                                 controlIndex += 1;
@@ -1390,13 +1401,15 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                                 useFixedDomain: false,
                                 useNiceScale: false,
                                 horizontalOff: false,
-                                verticalOff: true,
+                                verticalOff: false,
                                 unzoomEventType: 'dblclick.zoom'
                             }
                         }
                     };
+                    console.log("xDomain: ", $scope.optionPlot.chart.xDomain);
                     optionSharingX.chart.xDomain = $scope.optionPlot.chart.xDomain;
                     //optionSharingX.chart.yDomain = $scope.optionPlot.chart.yDomain;
+                    //console.log("plot width: ", $scope.optionPlot.chart.width);
                     //optionSharingX.chart.width = $scope.optionPlot.chart.width;
 
                     //horizontal bar chart, sharing y
