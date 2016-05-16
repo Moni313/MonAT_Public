@@ -113,15 +113,17 @@ angular.module('dqDirective', [])
 
 
 
-
-
-
-
-
     .directive('ngListJsonVariables', function(){
         return {
             restrict: 'E',
             templateUrl: "/static/templates/menu/completeness/listJsonVariables.html"
+        }
+    })
+
+    .directive('ngGroupByCompleteness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/completeness/groupBy.html'
         }
     })
 
@@ -148,6 +150,13 @@ angular.module('dqDirective', [])
         }
     })
 
+
+    .directive('ngInteraction', function() {
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/completeness/interaction.html"
+        }
+    })
 
 
     .directive('ngMain', function(){
@@ -222,6 +231,7 @@ angular.module('dqDirective', [])
                         });
                     };
                     scope.nameFile = (onChangeEvent.srcElement || onChangeEvent.target).files[0].name;
+                    scope.variables = [];
                     scope.variables =
                     reader.readAsText((onChangeEvent.srcElement || onChangeEvent.target).files[0]);
                 });

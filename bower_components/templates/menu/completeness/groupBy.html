@@ -1,0 +1,8 @@
+<div ng-controller="groupByCtrl">
+    <label class="btn-default btn-xs" for="group">Group by: </label>
+    <a role="button" ng-click="resetGroupBy()" class="btn-xs pull-right">Reset</a>
+    <br>
+    <select name="group" ng-model="groupBy">
+        <option ng-repeat="variable in variables" >{[{variable.name}]}</option>
+    </select>
+</div>

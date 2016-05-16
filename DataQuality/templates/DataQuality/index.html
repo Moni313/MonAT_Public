@@ -27,9 +27,10 @@
 
 <body ng-controller="dqCtrl">
 
-<script type="text/javascript" src={% static "myJs/myJs.js" %}></script>
+
 <script type="text/javascript" src={% static "jquery/dist/jquery.js" %}></script>
 <script type="text/javascript" src={% static "bootstrap/dist/js/bootstrap.js" %}></script>
+<!-- <script type="text/javascript" src={% static "myJs/myJs.js" %}></script> -->
 
 
 
@@ -67,17 +68,17 @@
     <div id="page-content-wrapper">
       <div class="container-fluid">
           <div>
-    <ng-horizontal-menu></ng-horizontal-menu>
-</div>
-          <hr>
-        <div class="row" ng-show="menuReady">
-          <div class="col-lg-12 well-small">
-              <button href="#menu-toggle" class="btn btn-default btn-sm" id="menu-toggle">
-                  <span class="glyphicon glyphicon-menu-hamburger"></span>
-              </button>
-              <ng-main></ng-main>
+              <ng-horizontal-menu></ng-horizontal-menu>
+              <button href="#menu-toggle" class="btn btn-default btn-sm" id="menu-toggle" ng-show="menuReady">
+                      <span class="glyphicon glyphicon-menu-hamburger"></span>
+                  </button>
           </div>
-        </div>
+
+          <div class="row" ng-show="menuReady">
+              <div class="col-lg-12 well-small">
+                  <ng-main></ng-main>
+              </div>
+          </div>
       </div>
     </div>
     <!-- /#page-content-wrapper -->

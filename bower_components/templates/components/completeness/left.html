@@ -1,8 +1,8 @@
 <div ng-show="showAllSharingAxis">
-<div ng-repeat="variable in variables"
-     ng-if="(variable.name != nameY) && variable.state.show"
-     class="pull-left col-md-1">
-    <nvd3 options="variable.optionSharingY"
-          data="variable.dataSharingY"></nvd3>
-</div>
+    <div ng-repeat="variable in variables"
+         ng-if="(variable.name != nameY) && variable.state.show"
+         class="pull-left col-md-1">
+        <nvd3 options="variable.optionSharingY"
+              data="variable.dataSharingY"></nvd3>
     </div>
+</div>

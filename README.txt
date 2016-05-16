@@ -77,4 +77,4 @@ http://stackoverflow.com/questions/32324321/how-to-hide-sidebar-in-bootstrap-by-
 
 
 /////
-git push https://scmno@develop.leeds.ac.uk/comp-MonAT/git master
+git push https://scmno@develop.leeds.ac.uk/comp-monat/git master

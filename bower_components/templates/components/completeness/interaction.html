@@ -1,0 +1,24 @@
+<div>
+    <p ></p>
+    <table id="tableInteraction"
+       style="font-size: small"
+           class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td colspan="3" style="text-align: center">Interaction</td>
+        </tr>
+    </thead>
+    <tr >
+        <td class="cellInteraction text-center">Variables</td>
+        <td class="cellInteraction text-center">Action</td>
+    </tr>
+    <tr ng-repeat="action in interactions">
+        <td ><li ng-repeat="a in action.variables track by $index">{[{a.toString()}]}</li></td>
+        <td class="text-right">
+            <button type="button" ng-click="deleteInteraction($index)" class="btn btn-default btn-xs pull-left">Delete</button>
+
+        </td>
+    </tr>
+</table>
+
+</div>

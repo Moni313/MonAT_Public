@@ -1,6 +1,6 @@
 <!-- TODO put this collapsing right as vertical menu-->
 
-<div class="row div_space">
+<div class="row div_space" id="contextualMenu">
     <label class="btn-xs">Share Axis
         <input type="checkbox"
                ng-model="showAllSharingAxis"
@@ -14,12 +14,12 @@
          </input> {[{variable.name}]}
     </label>
 
-    <div class="pull-right">
+    <div class="pull-right" ng-show="noneShow > 1">
         <form name="logic"> |
             <label>
                 <input type="radio" ng-model="logicEvaluation" value="AND" ng-click="logicEval()">
                 AND
-            </label>
+            </label> |
             <label>
                 <input type="radio" ng-model="logicEvaluation" value="OR" ng-click="logicEval()">
                 OR
