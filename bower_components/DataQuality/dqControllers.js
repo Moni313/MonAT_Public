@@ -264,8 +264,15 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         };
 
         $scope.refreshChart = function(){
-            $scope.start();
-        }
+            var count = 0;
+            angular.forEach($scope.variables, function(variable){
+                if(variable.state.selected) count += 1;
+            });
+            if(count == 0){
+                $scope.completenessResetAll();
+            }
+            else $scope.start();
+        };
 
         /**
          * Event: de-select all variables for completeness check
@@ -292,6 +299,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.$emit('resetBarChart');
             $scope.$emit('resetPlot');
             $scope.$emit('interaction');
+
+            $scope.$emit('emptyGroupBy');
         };
 
         /**
@@ -333,6 +342,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             // });
             $scope.$emit('startBarChartUpdated');
         });
+
     }])
 
     .controller('xCtrl', ['$scope', 'dqFactory', function($scope, dqFactory){
@@ -464,6 +474,13 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         $scope.groupBy = dqFactory.completeness.groupBy;
 
         $scope.groupByVariable = function(){
+            var count = 0;
+            angular.forEach(dqFactory.completeness.variables, function(variable){
+                if(variable.state.selected) count += 1;
+            });
+            if(count = 0){
+                return;
+            }
             dqFactory.completeness.groupByShow = true;
             dqFactory.completeness.groupBy = $scope.groupBy;
             $scope.$emit('groupByVariable');
@@ -473,7 +490,11 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.groupBy = '';
             dqFactory.completeness.groupByShow = false;
             $scope.$emit('emptyGroupBy');
-        }
+        };
+
+        $scope.$on('resetGroupBy', function(){
+            $scope.resetGroupBy();
+        });
     }])
 
     //Components Controllers
@@ -906,16 +927,24 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
         $scope.$on('refreshChart', function() {
 
-            $scope.sizeContent = dqFactory.content.length;
-            $scope.sizeSubset = dqFactory.subsetContent.length;
-
             dqFactory.completeness.barChartShow = true;
             tableCompletenessSelected();
             $scope.variables = dqFactory.completeness.variables;
+            var count = 0;
+            angular.forEach($scope.variables, function(variable){
+                if(variable.state.selected) count += 1;
+            });
+            if(count == 0){
+                $scope.$broadcast('emptyBarChart');
+                $scope.$broadcast('resetGroupBy');
+                $scope.$emit('resetPlot');
+                return;
+            }
 
-            //$scope.dataSunburstCompleteness = sbc();
+            $scope.sizeContent = dqFactory.content.length;
+            $scope.sizeSubset = dqFactory.subsetContent.length;
+
             $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
-
             $scope.barChartShow = dqFactory.completeness.barChartShow;
 
             //dqFactory.storeCompleteness("selection");
@@ -1055,7 +1084,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
         $scope.$on('resetGroupBy', function(){
             $scope.groupByShow = false;
-        })
+        });
 
         $scope.$on('interactionRefresh', function() {
             $scope.interactions = dqFactory.interactions;
