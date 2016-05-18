@@ -152,6 +152,8 @@ h5 {
 }
 hr {
     height: 2px;
+    color: black;
+    border-style: groove;
 }
 
 td.cell:last-child {

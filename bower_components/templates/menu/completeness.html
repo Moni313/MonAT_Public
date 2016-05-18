@@ -2,11 +2,14 @@
     <a role="button" class="btn-default" data-toggle="collapse" data-target="#idCompleteness">Completeness</a>
     <div id="idCompleteness" class="collapse">
         <br>
+        <hr>
         <ng-list-json-variables></ng-list-json-variables>
 
         <br>
-        <ng-color-completeness></ng-color-completeness>
+        <hr>
+        <ng-group-by-completeness></ng-group-by-completeness>
 
+        <br>
         <hr>
         <div>
             <h5>Charts</h5>
@@ -16,5 +19,9 @@
 
                 <ng-hybrid-plot></ng-hybrid-plot>
         </div>
+
+        <br>
+        <hr>
+        <ng-color-completeness></ng-color-completeness>
     </div>
 </div>

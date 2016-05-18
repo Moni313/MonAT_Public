@@ -37,10 +37,17 @@
 <div ng-controller="completenessCtrl" >
     <div class="row well" ng-if="barChartShow" id="barChartShow">
         <div class="col-md-6 pull-left">
+
+
             <nvd3 config="{deepWatchData: true}"
                   options="optionsMultiBarHorizontalChartCompleteness"
                   data="dataMultiBarHorizontalChartCompleteness">
             </nvd3>
+            <br>
+            <nvd3 config="{deepWatchData: true}"
+                  options="optionGroupBy"
+                  data="dataGroupBy"
+                  ng-if="groupByShow"></nvd3>
             <br>
             <button type="button" ng-click="restart()" class="btn btn-default btn-xs pull-left">Restart</button>
 

@@ -48,7 +48,7 @@ angular.module('dqFactory', [])
                 //}],
 
                 color: {
-                    missing: "#7570b3",
+                    missing: "#000000", //"#7570b3",
                     present: "#d95f02"
                 },
                 colorRange: {
@@ -84,6 +84,7 @@ angular.module('dqFactory', [])
                 barChartShow: false,
 
                 groupBy: '',
+                groupByShow: false,
 
                 sql: {
                     select: "",
@@ -106,10 +107,10 @@ angular.module('dqFactory', [])
                     nameX: "",
                     nameY: "",
                     title: "",
-                    height: 350,
+                    height: 450,
                     width: 0,
                     showNumericalPlot: false,
-                    showAllSharingAxis: true,
+                    showAllSharingAxis: false,
                     logicEvaluation: 'AND',
 
                     sizeSinglePoint: 0.1,
@@ -232,9 +233,12 @@ angular.module('dqFactory', [])
                                 return item[variable];
                             }).ToArray();
                         angular.forEach(groups, function (gr) {
-                            if(gr.source[0][variable] != "")
+                            if(gr.source[0][variable] == null)
+                                row4table.categories.push("Null");
+                            else if(gr.source[0][variable] != "")
                                 row4table.categories.push(gr.source[0][variable]);
                         });
+                        //console.log(row4table.categories);
                     }
                 }
                 row4table.present = countPresent;
