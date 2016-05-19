@@ -330,6 +330,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         };
 
         $scope.startPlot = function(){
+            if($scope.nameX == "" || $scope.nameY == ""){
+                $scope.$emit('resetPlot');
+                return;
+            }
             dqFactory.completeness.numericalPlot.height = $scope.height;
             dqFactory.completeness.numericalPlot.showNumericalPlot = true;
             $scope.$emit('startPlotVis');
@@ -1187,7 +1191,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         $scope.showSharingAxis = function(){
             xWidth = setSharingWidth();
             $scope.$broadcast('refreshPlot');
-            sharingAxis();
+            // sharingAxis();
         };
 
         $scope.toggleAllSharingAxis = function () {
@@ -1320,6 +1324,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.optionPlot.subtitle.text = $scope.optionPlot.subtitle.text.concat(" ( present: ").concat($scope.dataPlot[0].values.length)
                 .concat(", missing: ").concat($scope.dataPlot[1].values.length).concat(" )");
 
+            sharingAxis();
         });
 
         $scope.$on('emptyPlot', function(){
