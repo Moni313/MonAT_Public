@@ -3,7 +3,8 @@
  */
 var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'])
 
-    .controller('dqCtrl', ['$scope', 'dqFactory', function($scope, dqFactory)   {
+    /** The controller handles the events (communication between controllers that have no scope) **/
+    .controller('dqCtrl', ['$scope', '$http', 'dqFactory', function($scope, $http, dqFactory)   {
 
         $("#menu-toggle").click(function(e) {
             e.preventDefault();
@@ -45,6 +46,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $("#wrapper").toggleClass("toggled");
             //dqFactory.completeness.numericalPlot.width = document.getElementById("widthPlot").offsetWidth;
         });
+
         $scope.$on('startBarChart', function(){
             dqFactory.completeness.barChartShow = true;
             $scope.barChartShow = dqFactory.completeness.barChartShow;
@@ -57,15 +59,17 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.$broadcast('refreshPMColor');
             $scope.$broadcast('refreshPlot');
         });
+
         $scope.$on('startPlotVis', function () {
-            //console.log("broadcast plot");
+
+            $("#wrapper").toggleClass("toggled");
+
             $scope.$broadcast('refreshPlot');
         });
         $scope.$on('resetPlot', function(){
             dqFactory.completeness.numericalPlot.showNumericalPlot = false;
             $scope.$broadcast('emptyPlot');
         });
-
         $scope.$on('resetVarPlot', function(){
             $scope.$broadcast('resetVar');
         });
@@ -78,10 +82,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.$broadcast('updateVariableSelected');
         });
 
-        $scope.$on('groupByVariable', function(){
+        $scope.$on('group', function(){
             $scope.$broadcast('groupByVar');
         });
-
         $scope.$on('emptyGroupBy', function(){
             $scope.$broadcast('resetGroupBy');
         });
@@ -162,6 +165,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                             isNumerical: row.numerical,
                             isCategorical: row.categorical,
                             isIndex: row.index,
+                            isDate: row.date
                         },
                         statistics: {
                             missingTotal: row.missing,
@@ -178,6 +182,25 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                         }
                     });
                 }
+                else if(row.date){
+                   dqFactory.completeness.variables.push({
+                     name:variable,
+                     state:{
+                             selected: false,
+                             show: false,
+                             isNumerical: row.numerical,
+                             isCategorical: row.categorical,
+                             isIndex: row.index,
+                             isDate: row.date
+                     },
+                     statistics: {
+                         missing: row.missing,
+                         missingTotal: row.missing,
+                         present: row.present,
+                         presentTotal: row.present
+                     }
+                 })
+                }
                 else{
                     dqFactory.completeness.variables.push({
                         name: variable,
@@ -188,6 +211,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                             isCategorical: row.categorical,
                             categories: row.categories,
                             isIndex: row.index,
+                            isDate: row.date
                         },
                         statistics: {
                             missing: row.missing,
@@ -233,15 +257,12 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
     //    };
     //})
 
-
     .controller('varsCtrl', ['$scope', '$rootScope', 'dqFactory', function($scope, $rootScope, dqFactory){
         $scope.variables = dqFactory.completeness.variables;
-        $scope.height = dqFactory.completeness.numericalPlot.height;
-        //console.log("height: ", $scope.height);
+        $scope.allSelected = dqFactory.completeness.allSelected;
 
         $scope.showNumericalPlot = dqFactory.completeness.numericalPlot.showNumericalPlot;
 
-        $scope.allSelected = dqFactory.completeness.allSelected;
         $scope.colorPresent = dqFactory.completeness.color.present;
         $scope.colorMissing = dqFactory.completeness.color.missing;
 
@@ -259,8 +280,11 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             if(!dqFactory.completeness.allSelected)
                 $scope.completenessResetAll();
 
-            if(dqFactory.completeness.allSelected)
+            if(dqFactory.completeness.allSelected){
                 $scope.start();
+                //console.log("group from allSelected");
+                $scope.$emit('group');
+            }
         };
 
         $scope.refreshChart = function(){
@@ -271,7 +295,16 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             if(count == 0){
                 $scope.completenessResetAll();
             }
-            else $scope.start();
+            else {
+                if(count <= $scope.variables.length)
+                    $scope.allSelected = false;
+                else if(count == $scope.variables.length)
+                    $scope.allSelected = true;
+                $scope.start();
+                if(dqFactory.completeness.groupBy != ""){
+                    $scope.$emit('group');
+                }
+            }
         };
 
         /**
@@ -285,7 +318,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             dqFactory.completeness.horizontalBarChart = [];
 
             dqFactory.completeness.allSelected = false;
-            $scope.allSelected = false; //Tho-way binding does not work?
+            $scope.allSelected = false; //TODO Tho-way binding does not work?
+            //console.log(dqFactory.completeness.allSelected);
+            dqFactory.completeness.groupBy = "";
 
             angular.forEach(dqFactory.completeness.variables, function (variable) {
                 variable.state.selected = false;
@@ -295,6 +330,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             dqFactory.completeness.interactions = [];
 
             dqFactory.completeness.barChartShow = false;
+
             dqFactory.addStepInteraction();
             $scope.$emit('resetBarChart');
             $scope.$emit('resetPlot');
@@ -349,15 +385,61 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
     }])
 
-    .controller('xCtrl', ['$scope', 'dqFactory', function($scope, dqFactory){
+    // .controller('xCtrl', ['$scope', 'dqFactory', function($scope, dqFactory){
+    //
+    //     //plot variables
+    //     $scope.variables = dqFactory.completeness.variables;
+    //
+    //     $scope.nameX = dqFactory.completeness.numericalPlot.nameX;
+    //
+    //     $scope.$on('resetVar', function(){
+    //         $scope.nameX = "";
+    //     });
+    //
+    //     $scope.resetVarX =  function(){
+    //         $scope.nameX = "";
+    //         //console.log("Resetting nameX: ", dqFactory.completeness.numericalPlot.nameX);
+    //         dqFactory.completeness.numericalPlot.nameX = "";
+    //         $scope.$emit('resetPlot');
+    //     };
+    //
+    //     $scope.$watch('nameX', function(n){
+    //         dqFactory.completeness.numericalPlot.nameX = n;
+    //     });
+    // }])
 
-        //plot variables
+    // .controller('yCtrl', ['$scope', 'dqFactory',  function($scope, dqFactory){
+    //
+    //     //plot variables
+    //     $scope.variables = dqFactory.completeness.variables;
+    //     $scope.nameY = dqFactory.completeness.numericalPlot.nameY;
+    //
+    //     $scope.$watch('nameY', function(n){
+    //         dqFactory.completeness.numericalPlot.nameY = n;
+    //     });
+    //
+    //     $scope.resetVarY = function(){
+    //         $scope.nameY = "";
+    //         dqFactory.completeness.numericalPlot.nameY = ""; //TODO delete
+    //         $scope.$emit('resetPlot');
+    //     };
+    //
+    //     $scope.$on('resetVar', function(){
+    //         $scope.nameY = "";
+    //     });
+    // }])
+
+    .controller('xyCtrl', ['$scope', 'dqFactory', function($scope, dqFactory){
+
         $scope.variables = dqFactory.completeness.variables;
 
         $scope.nameX = dqFactory.completeness.numericalPlot.nameX;
+        $scope.nameY = dqFactory.completeness.numericalPlot.nameY;
+        $scope.height = dqFactory.completeness.numericalPlot.height;
 
         $scope.$on('resetVar', function(){
             $scope.nameX = "";
+            $scope.nameY = "";
         });
 
         $scope.resetVarX =  function(){
@@ -367,30 +449,38 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             $scope.$emit('resetPlot');
         };
 
-        $scope.$watch('nameX', function(n){
-            dqFactory.completeness.numericalPlot.nameX = n;
-        });
-    }])
-
-    .controller('yCtrl', ['$scope', 'dqFactory',  function($scope, dqFactory){
-
-        //plot variables
-        $scope.variables = dqFactory.completeness.variables;
-        $scope.nameY = dqFactory.completeness.numericalPlot.nameY;
-
-        $scope.$watch('nameY', function(n){
-            dqFactory.completeness.numericalPlot.nameY = n;
-        });
-
         $scope.resetVarY = function(){
             $scope.nameY = "";
-            dqFactory.completeness.numericalPlot.nameY = ""; //TODO delete
+            dqFactory.completeness.numericalPlot.nameY = "";
             $scope.$emit('resetPlot');
         };
 
-        $scope.$on('resetVar', function(){
-            $scope.nameY = "";
+        $scope.$watch('nameX', function(n){
+            dqFactory.completeness.numericalPlot.nameX = n;
+            if($scope.nameY != "" && n != ""){
+                dqFactory.completeness.numericalPlot.height = $scope.height;
+                dqFactory.completeness.numericalPlot.showNumericalPlot = true;
+                $scope.$emit('startPlotVis');
+            }
+
         });
+        
+        $scope.$watch('nameY', function(n){
+            dqFactory.completeness.numericalPlot.nameY = n;
+            if($scope.nameX != "" && n != ""){
+                dqFactory.completeness.numericalPlot.height = $scope.height;
+                dqFactory.completeness.numericalPlot.showNumericalPlot = true;
+                $scope.$emit('startPlotVis');
+            }
+        });
+
+        $scope.startPlot = function(){
+            if($scope.height != ""  && $scope.nameX != "" && $scope.nameY != ""){
+                dqFactory.completeness.numericalPlot.height = $scope.height;
+                $scope.$emit('startPlotVis');
+            }
+        };
+
     }])
 
     // .controller('sqlCtrl', ['$scope', 'dqFactory', function($scope, dqFactory){
@@ -477,23 +567,36 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
         $scope.groupBy = dqFactory.completeness.groupBy;
 
+        $scope.$watch('groupBy', function(n){
+            if(n!=""){
+                dqFactory.completeness.groupBy = n;
+                $scope.groupByVariable();
+            }
+        });
+
+        $scope.$on('groupByVarMenu', function(){
+            $scope.groupByVariable();
+        });
+
         $scope.groupByVariable = function(){
             var count = 0;
             angular.forEach(dqFactory.completeness.variables, function(variable){
                 if(variable.state.selected) count += 1;
             });
-            if(count = 0){
+            if(count == 0){
+                dqFactory.completeness.groupByShow = false;
                 return;
             }
             dqFactory.completeness.groupByShow = true;
             dqFactory.completeness.groupBy = $scope.groupBy;
-            $scope.$emit('groupByVariable');
+            $scope.$emit('group');
         };
 
         $scope.resetGroupBy = function(){
             $scope.groupBy = '';
+            dqFactory.completeness.groupBy = "";
             dqFactory.completeness.groupByShow = false;
-            $scope.$emit('emptyGroupBy');
+            $scope.$emit('group');
         };
 
         $scope.$on('resetGroupBy', function(){
@@ -501,15 +604,65 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         });
     }])
 
+    .controller('changeTypeVariableCtrl', ['$scope', 'dqFactory', function($scope, dqFactory) {
+        $scope.variables = dqFactory.completeness.variables;
+        $scope.changeTypeVar = "";
+        $scope.newTypeVar = "";
+        $scope.types = ['index', 'date', 'categorical', 'numerical'];
+
+        $scope.changeTypeOfVariable = function () {
+
+            console.log($scope.changeTypeVar);
+            console.log($scope.newTypeVar);
+
+            angular.forEach(dqFactory.completeness.variables, function (variable) {
+                if (variable.name == $scope.changeTypeVar) {
+                    switch ($scope.newTypeVar) {
+                        case 'index':
+                            variable.state.isIndex = true;
+                            variable.state.isDate = false;
+                            variable.state.isCategorical = false;
+                            variable.state.isNumerical = false;
+                            break;
+                        case 'date':
+                            variable.state.isIndex = false;
+                            variable.state.isDate = true;
+                            variable.state.isCategorical = false;
+                            variable.state.isNumerical = false;
+                            break;
+                        case 'categorical':
+                            variable.state.isIndex = false;
+                            variable.state.isDate = false;
+                            variable.state.isCategorical = true;
+                            variable.state.isNumerical = false;
+                            break;
+                        case 'numerical':
+                            variable.state.isIndex = false;
+                            variable.state.isDate = false;
+                            variable.state.isCategorical = false;
+                            variable.state.isNumerical = true;
+                            break;
+                        default:
+                            console.log("no variable changed type");
+                    }
+                }
+            });
+
+            //TODO update tableselection
+        };
+
+        $scope.resetTypeVariable = function(){
+            $scope.changeTypeVar = "";
+            $scope.newTypeVar = "";
+        }
+    }])
+
     //Components Controllers
     //contains all the plots:
     //(bar chart, sunburst, plot), (historical bar chart, horizontal bar chart)
     .controller('completenessCtrl', ['$scope', 'dqFactory', function($scope, dqFactory) {
 
-        //console.log('completeness controller');
-        $scope.sizeSubset = dqFactory.subsetContent.length;
-
-        //set the table with completeness information for each variable
+        //update the table with completeness information for each variable based on the actual content
         function tableCompletenessSelected() {
             //console.log(dqFactory.completeness.variables);
 
@@ -524,17 +677,18 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                     item.statistics.present = row.present;
                     item.statistics.missing = row.missing;
 
-                    item.statistics.min = row.min;
-                    item.statistics.max = row.max;
-                    item.statistics.mean = row.mean;
+                    if(item.state.isNumerical) {
+                        item.statistics.min = row.min;
+                        item.statistics.max = row.max;
+                        item.statistics.mean = row.mean;
+                    }
 
                 }
             });
             return dqFactory.completeness.variables;
         }
 
-        //multiBarHorizontalChart
-        //set present/missing data for bar chart
+        /** multiBarHorizontalChart. Set present/missing data for bar chart **/
         function mbhcc(){
             tableCompletenessSelected();
             var completenessData = [];
@@ -555,76 +709,70 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             return completenessData;
         }
 
-        function dataGroupByVarCompleteness(){
+        function dataGroupByVarCompleteness(actualContent){
 
             var groupData = [];
-            var count = [];
 
-            var actualContent = dqFactory.getActualContent();
             var variable = dqFactory.completeness.groupBy;
+
             //console.log(variable);
             var groupedActualContent = Enumerable.From(actualContent)
                 .GroupBy(function(item) { return item[variable]; }).ToArray();
 
 
             var indexVariable = 0;
-
             angular.forEach(dqFactory.completeness.variables, function(vari) {
-                    if (vari.state.selected) {
+                if (vari.state.selected) {
 
-                        var numbOfGroup = 0;
+                    var numbOfGroup = 0;
+                    groupData.push({key: vari.name, values: []});
 
-                        groupData.push({key: vari.name, values: []});
-                        //console.log(vari.name);
+                    var count = [];
+                    var present = 0;
+                    angular.forEach(groupedActualContent, function (item) {
 
+                        //console.log("Key: ", item.Key());
+                        var missing = 0;
+                        var runLoop = true;
 
-                        var count = [];
-                        var present = 0;
-                        angular.forEach(groupedActualContent, function (item) {
+                        while(runLoop) {
+                            angular.forEach(item.source, function (i, index) {
+                                //console.log(i);
+                                //count number of missing values for variable in the group
+                                if (!dqFactory.hasMeaningValue(i[vari.name])) {
+                                    runLoop = false;
+                                    missing += 1;
+                                }
+                                //console.log(index);
+                                if(index == item.source.length-1) runLoop = false;
 
-                            //console.log("Key: ", item.Key());
-                            var missing = 0;
-
-                            var runLoop = true;
-
-                            while(runLoop) {
-                                angular.forEach(item.source, function (i, index) {
-                                    //console.log(i);
-                                    //count number of missing values for variable in the group
-                                    if (!dqFactory.hasMeaningValue(i[vari.name])) {
-                                        runLoop = false;
-                                        missing += 1;
-                                    }
-                                    //console.log(index);
-                                    if(index == item.source.length-1) runLoop = false;
-
-                                });
-                            }
-                            if(runLoop && missing == 0) present +=1;
-                            count.push(missing);
-                            //console.log("GroupBy: ", item.source[0][variable], " ", missing);
-                        });
-                        //count.push(present);
-                        //console.log(count);
-                        var result = {};
-                        for(var i = 0; i < count.length; ++i) {
-                            if (!result[count[i]])
-                                result[count[i]] = 0;
-                            ++result[count[i]];
-
+                            });
                         }
-                        //console.log("result: ", result);
+                        if(runLoop && missing == 0) present +=1;
+                        count.push(missing);
+                        //console.log("GroupBy: ", item.source[0][variable], " ", missing);
+                    });
+                    //count.push(present);
+                    //console.log(count);
+                    var result = {};
+                    for(var i = 0; i < count.length; ++i) {
+                        if (!result[count[i]])
+                            result[count[i]] = 0;
+                        ++result[count[i]];
 
-                        var keys = Object.keys(result);
-                        angular.forEach(keys, function(k){
-                            //console.log("result: ", k, " ", result[k]);
-                            numbOfGroup += result[k];
-                            groupData[indexVariable].values.push({label: k, value:result[k]});
-                        });
-
-                        $scope.numbGroups = numbOfGroup;
-                        indexVariable +=1;
                     }
+                    //console.log("result: ", result);
+
+                    var keys = Object.keys(result);
+                    angular.forEach(keys, function(k){
+                        //console.log("result: ", k, " ", result[k]);
+                        numbOfGroup += result[k];
+                        groupData[indexVariable].values.push({label: k, value:result[k]});
+                    });
+
+                    $scope.numbGroups = numbOfGroup;
+                    indexVariable +=1;
+                }
             });
 
             //groupData[0].values.push({label: item.source[0][variable], value: missing});
@@ -635,143 +783,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         function selectGroupSubset(key, label){
 
         }
-
-
-        //sunburst
-        //state = [present | missing]
-        //function sbc(variableSelected, state) {
-        //    //create first ring of the sunburst with the selected variables
-        //    console.log("dqFactory.completeness.sunburst.ring", dqFactory.completeness.sunburst.ring);
-        //    if (dqFactory.completeness.sunburst.ring == 0) {
-        //        var sunburstData = [];
-        //        sunburstData = [{
-        //            name: dqFactory.nameFile,
-        //            color: "#aaaaaa",
-        //            children: []
-        //        }];
-        //
-        //        var color = 0;
-        //        //add all the selected to the ring:0
-        //        angular.forEach(dqFactory.completeness.variables, function (variable) {
-        //            if(variable.state.selected) {
-        //                var indexColorPresent = color % dqFactory.completeness.colorRange.present.length;
-        //                var indexColorMissing = color % dqFactory.completeness.colorRange.missing.length;
-        //                if (variable.statistics.present > 0) {
-        //                    sunburstData[0].children.push({
-        //                        name: variable.name.concat(" present"),
-        //                        state: "present",
-        //                        size: variable.statistics.present,
-        //                        color: dqFactory.completeness.colorRange.present[indexColorPresent],
-        //                        ring: 0,
-        //                        children: []
-        //                    })
-        //                }
-        //                if (variable.statistics.missing > 0) {
-        //                    sunburstData[0].children.push({
-        //                        name: variable.name.concat(" missing"),
-        //                        state: "missing",
-        //                        size: variable.statistics.missing,
-        //                        color: dqFactory.completeness.colorRange.missing[indexColorMissing],
-        //                        ring: 0,
-        //                        children: []
-        //                    })
-        //                }
-        //                color += 1;
-        //            }
-        //        });
-        //        dqFactory.completeness.sunburst.ring = 1;
-        //        console.log("should be called once: ", JSON.stringify(sunburstData));
-        //        console.log("should be called once: ", sunburstData);
-        //        return sunburstData;
-        //    }
-        //    else {
-        //        //new ring, new path, update the sunburst
-        //
-        //        scanSunburst($scope.dataSunburstCompleteness[0].children, dqFactory.completeness.sunburst.ring, variableSelected, state);
-        //
-        //        return $scope.dataSunburstCompleteness;
-        //    }
-        //}
-
-        /**
-         * adding rings to the sunburst chart using a tail recursion
-         * @param sunburst object to add a new ring
-         * @param ring index of new ring to add
-         * @param variableSelected name of variable to add
-         * @param state [present|missing] of variable to add
-         */
-        //function scanSunburst(children, ring, variableSelected, state) {
-        //    var found = false;
-        //
-        //
-        //    angular.forEach(children, function(child){
-        //        var nameVar = variableSelected.concat(" ").concat(state);
-        //        if((child.name == nameVar) && (child.ring == ring-1)) {
-        //            found = true;
-        //
-        //            var color = 0;
-        //
-        //            angular.forEach(dqFactory.completeness.variables, function (row) {
-        //                if (row.state.selected) {
-        //                    console.log("adding", row.name);
-        //                    console.log("before children", child.children);
-        //
-        //                    var indexColorPresent = color % dqFactory.completeness.colorRange.present.length;
-        //                    var indexColorMissing = color % dqFactory.completeness.colorRange.missing.length;
-        //
-        //                    if (row.statistics.present > 0) {
-        //                        child.children.push({
-        //                            name: row.name,
-        //                            state: "present",
-        //                            size: row.statistics.present,
-        //                            color: dqFactory.completeness.colorRange.present[indexColorPresent],
-        //                            ring: ring,
-        //                            children: []
-        //                        });
-        //                    }
-        //
-        //                    if (row.statistics.missing > 0) {
-        //                        child.children.push({
-        //                            name: row.name,
-        //                            state: "missing",
-        //                            size: row.statistics.missing,
-        //                            color: dqFactory.completeness.colorRange.missing[indexColorMissing],
-        //                            ring: ring,
-        //                            children: []
-        //                        });
-        //                    }
-        //                    console.log("after", child.children);
-        //                    dqFactory.completeness.sunburst.ring += 1;
-        //                }
-        //            });
-        //
-        //        }
-        //        if((child.ring < ring-1)
-        //            && !found
-        //            && (child.hasOwnProperty("children"))){
-        //            //going through the rings to find the correct position for the new ring
-        //            angular.forEach(child.children, function(child){
-        //                console.log("going in deep");
-        //                scanSunburst(child.children, ring, variableSelected, state);
-        //            })
-        //        }
-        //    });
-        //    if(!found){
-        //        console.log("not found");
-        //        angular.forEach(children, function(child){
-        //            //the function stops when the correct ring is found
-        //            if(child.hasOwnProperty("children")) {
-        //                console.log("children: ", child.children);
-        //                scanSunburst(child.children, ring, variableSelected, state);
-        //            }
-        //            else{
-        //                console.log("no more children");
-        //            }
-        //        });
-        //    }
-        //}
-        //
-
 
         //calculate the sub set based on the user selection on the bar chart
         function selectSubset(key, variableSelected){
@@ -829,11 +840,41 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             tableCompletenessSelected();
         }
 
+        $scope.restart = function(){
+            dqFactory.subsetContent = dqFactory.content;
+            $scope.$broadcast('refreshChart');
+            $scope.$broadcast('groupByVar');
+        };
 
-        $scope.optionsMultiBarHorizontalChartCompleteness = {
+        $scope.$on('refreshChart', function() {
+            dqFactory.completeness.barChartShow = true;
+            tableCompletenessSelected();
+            $scope.variables = dqFactory.completeness.variables;
+            var count = 0;
+            angular.forEach($scope.variables, function(variable){
+                if(variable.state.selected) count += 1;
+            });
+            if(count == 0){
+                //no variables are selected
+                $scope.$broadcast('emptyBarChart');
+                $scope.$broadcast('resetGroupBy');
+                $scope.$emit('resetPlot');
+                return;
+            }
+            if(count < $scope.variables.length)
+                dqFactory.completeness.allSelected = false;
+
+            $scope.sizeContent = dqFactory.content.length;
+            $scope.sizeSubset = dqFactory.subsetContent.length;
+            $scope.barChartShow = dqFactory.completeness.barChartShow;
+
+
+            var height = (count * 30) + 100;
+
+            $scope.optionsMultiBarHorizontalChartCompleteness = {
             chart: {
                 type: 'multiBarHorizontalChart',
-                height: 500,
+                height: height,
                 color:  dqFactory.completeness.colorRange.present,//d3.scale.category10().range(),
                 x: function (d) {
                     return d.label;
@@ -894,6 +935,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                             $scope.$apply(function () {
                                 selectSubset(e.data.key, e.data.label);
                                 $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
+                                $scope.$emit('group');
                             });
                         }
                     },
@@ -905,51 +947,12 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             },
             title: {
                 enable: true,
-                text: $scope.title,
+                text: "Missing and Present values for the selected variable(s)",
                 className: "h5"
             }
         };
-
-
-        // $scope.optionsSunburstCompleteness = {
-        //         chart: {
-        //             type: 'sunburstChart',
-        //             height: 200,
-        //             color: dqFactory.completeness.colorRange.present, //d3.scale.category20c(),
-        //             duration: 350,
-        //             "sunburst": {
-        //                 mode: "count"
-        //                 //mode: "size"
-        //             }
-        //         }
-        //     };
-
-        $scope.restart = function(){
-            dqFactory.subsetContent = dqFactory.content;
-            $scope.$broadcast('refreshChart');
-        };
-
-        $scope.$on('refreshChart', function() {
-
-            dqFactory.completeness.barChartShow = true;
-            tableCompletenessSelected();
-            $scope.variables = dqFactory.completeness.variables;
-            var count = 0;
-            angular.forEach($scope.variables, function(variable){
-                if(variable.state.selected) count += 1;
-            });
-            if(count == 0){
-                $scope.$broadcast('emptyBarChart');
-                $scope.$broadcast('resetGroupBy');
-                $scope.$emit('resetPlot');
-                return;
-            }
-
-            $scope.sizeContent = dqFactory.content.length;
-            $scope.sizeSubset = dqFactory.subsetContent.length;
-
             $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
-            $scope.barChartShow = dqFactory.completeness.barChartShow;
+
 
             //dqFactory.storeCompleteness("selection");
             //dqFactory.store();
@@ -972,26 +975,42 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         });
 
         $scope.$on('groupByVar', function(){
-            if(dqFactory.completeness.groupBy != '')
-                dqFactory.completeness.groupByShow = true;
-            else dqFactory.completeness.groupByShow = false;
-
+            //dqFactory.completeness.groupByShow = dqFactory.completeness.groupBy != '';
+            // //
 
             $scope.groupByShow = dqFactory.completeness.groupByShow;
+            if(dqFactory.completeness.groupBy == "") {
+                dqFactory.completeness.groupByShow = false;
+                return;
+            }
 
-            if(!dqFactory.completeness.groupByShow) return;
+            dqFactory.completeness.groupByShow = true;
 
 
             $scope.variables = dqFactory.completeness.variables;
-
             var countSelected = 0;
             angular.forEach(dqFactory.completeness.variables, function(variable){
                 if(variable.state.selected) countSelected+=1;
             });
 
-            var height = (50 * countSelected)+500;
+            var actualContent = dqFactory.getActualContent();
+            $scope.dataGroupBy = dataGroupByVarCompleteness(actualContent);
 
-            $scope.dataGroupBy = dataGroupByVarCompleteness();
+
+            var keys = 0;
+            //console.log(JSON.stringify($scope.dataGroupBy, null, 2));
+            angular.forEach($scope.dataGroupBy, function(group){
+                angular.forEach(group, function(g){
+                    keys += g.length;
+                });
+            });
+
+            console.log("countSelected ", countSelected);
+            console.log("keys length: ", keys);
+            //var height = (10 * $scope.numbGroups) + (3 * keys) + 100;
+            var height = (15 * countSelected) + (5 * keys) + 100;
+
+            //console.log(height);
             $scope.optionGroupBy = {
             chart: {
                 type: 'multiBarHorizontalChart',
@@ -1003,8 +1022,8 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                 y: function (d) {
                     return d.value;
                 },
-                showControls: false,
-                showValues: true,
+                showControls: true,
+                showValues: false,
                 duration: 500,
 
                 useInteractiveGuideline: false,
@@ -1017,7 +1036,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                             "<tr>" +
                             "<td class='key'>" + d3.format(',.0f')(series.value) + "</td>" +
                             //"<td class='key'>" + e.data.cat + "</td>" +
-                            "<td class='key'></td>" +
+                            "<td class='key'>group(s)</td>" +
                             "</tr>" +
                             "<tr>" +
                             "<td class='x-value'>with</td>" +
@@ -1032,7 +1051,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                             "<thead>" +
                             "<tr>" +
                             "<td class='legend-color-guide'><div style='background-color: " + series.color + ";'></div></td>" +
-                            "<td class='key'><strong>" + dqFactory.completeness.groupBy + "</strong></td>" +
+                            "<td class='key'><strong>Group by " + dqFactory.completeness.groupBy + "</strong></td>" +
                             "</tr>" +
                             "</thead>";
 
@@ -1079,7 +1098,13 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             },
             title: {
                 enable: true,
-                text: 'Group by '.concat(dqFactory.completeness.groupBy).concat(" (# ").concat($scope.numbGroups).concat(")"),
+                text: 'Group by '
+                    .concat(dqFactory.completeness.groupBy)
+                    .concat(" (")
+                    .concat($scope.numbGroups)
+                    .concat(" groups over ")
+                    .concat((actualContent.length).toString())
+                    .concat(" records)"),
                 className: "h5"
             }
         };
@@ -1087,7 +1112,10 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         });
 
         $scope.$on('resetGroupBy', function(){
-            $scope.groupByShow = false;
+            //$scope.groupByShow = false;
+            dqFactory.completeness.groupByShow = false;
+            dqFactory.completeness.groupBy = "";
+            $scope.$emit('emptyGroupBy');
         });
 
         $scope.$on('interactionRefresh', function() {
@@ -1162,17 +1190,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
         };
 
-
-
-        //$scope.$on('redrawStpCharts', function(){
-        //    $scope.dataMultiBarHorizontalChartCompleteness = mbhcc();
-        //
-        //    //redraw colors sunburst
-        //    redrawSunburstColors($scope.dataSunburstCompleteness);
-        //});
-
     }])
-
 
     //content
     .controller('plotCtrl', ['$scope', 'dqFactory', function($scope, dqFactory){
@@ -1224,13 +1242,14 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             });
 
             var text = "";
-            if(countShow > 1) text = "Logic ".concat($scope.logicEvaluation).concat(" for missingnes");
-            else text = "Missingness";
+            if(countShow > 1) text = "Logic ".concat($scope.logicEvaluation).concat(" for missing values");
+            else text = "Missing values";
 
             $scope.optionPlot = {
                 chart: {
                     type: 'scatterChart',
                     height: $scope.height,
+                    width: xWidth,
                     color: dqFactory.completeness.colorRange.present, //d3.scale.category10().range(), //TODO
                     scatter: {
                         onlyCircles: false
@@ -1310,11 +1329,6 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                 }
             };
 
-            // xWidth = setSharingWidth();
-            $scope.optionPlot.chart.width = xWidth;
-            //$scope.optionPlot.chart.width = xWidth;
-            //xWidth = $scope.optionPlot.chart.width;
-
 
             //console.log("refresh plot, xWidth ", xWidth);
 
@@ -1328,17 +1342,16 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
         });
 
         $scope.$on('emptyPlot', function(){
-            $scope.showNumericalPlot = dqFactory.completeness.numericalPlot.showNumericalPlot;
             $scope.showNumericalPlot = false;
-            //console.log(dqFactory.completeness.numericalPlot.showNumericalPlot);
             $scope.dataPlot = [];
             angular.forEach(dqFactory.completeness.variable, function(variable){
                 //console.log("emptyPlot dataSharingX: ", variable.dataSharingX);
-                variable.dataSharingX = [];
-                variable.dataSharingY = [];
-                variable.dataCategorical = [];
+                //variable.dataSharingX = [];
+                //variable.dataSharingY = [];
+                //variable.dataCategorical = [];
+                variable.state.show = false;
             });
-            $scope.$emit('resetVarPlotXY');
+            //$scope.$emit('resetVarPlotXY');
         });
 
 
@@ -1937,7 +1950,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                                     var rows =
                                         "<tr>" +
                                         "<td class='key'>" + $scope.nameY + "</td>" +
-                                        "<td class='x-value'>" + series.key + "</td>" +
+                                        "<td class='x-value'>" + e.value + "</td>" +
                                         "</tr>" +
                                         "<tr>" +
                                         "<td class='key'>Missing: </td>" +
@@ -2283,6 +2296,48 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             return data;
         }
 
+    }])
+
+    .controller('parallelCoordinateCtrl', ['$scope','dqFactory', function($scope, dqFactory){
+
+        $scope.variablesList = [];
+        angular.forEach(dqFactory.completeness.variables, function(variable){
+            $scope.variablesList.push(variable.name);
+        });
+
+        $scope.optionParallelCoordinate = {
+            chart: {
+                type: "parallelCoordinates",
+                height: 450,
+                margin: {
+                    top: 30,
+                    right: 0,
+                    bottom: 10,
+                    left: 0
+                },
+                dimensions: $scope.variablesList
+            }
+        }
+
+        $scope.dataParallelCoordinate = getDataParallelCoordinate();
+        
+        function getDataParallelCoordinate(){
+            var data = dqFactory.getActualContent();
+            return data; //TODO delete return
+
+            var completeness = [];
+            angular.forEach(data, function(item){
+                angular.forEach(dqFactory.completeness.variables, function(variable){
+                    if(dqFactory.hasMeaningValue(item[variable.name])) {
+                        if(variable.state.isNumerical){
+
+                        }
+                    }
+                })
+                completeness.push();
+            });
+
+        }
     }]);
 
 

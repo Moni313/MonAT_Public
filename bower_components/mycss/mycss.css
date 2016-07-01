@@ -81,24 +81,24 @@
     /*overflow: scroll;*/
     height: 85%;
 }
-.sidebar-nav li {
-  text-indent: 20px;
-  line-height: 40px;
-}
-.sidebar-nav li a {
-  display: block;
-  text-decoration: none;
-  color: #999999;
-}
-.sidebar-nav li a:hover {
-  text-decoration: none;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.2);
-}
-.sidebar-nav li a:active,
-.sidebar-nav li a:focus {
-  text-decoration: none;
-}
+/*.sidebar-nav li {*/
+  /*text-indent: 20px;*/
+  /*line-height: 40px;*/
+/*}*/
+/*.sidebar-nav li a {*/
+  /*display: block;*/
+  /*text-decoration: none;*/
+  /*color: #999999;*/
+/*}*/
+/*.sidebar-nav li a:hover {*/
+  /*text-decoration: none;*/
+  /*color: #fff;*/
+  /*background: rgba(255, 255, 255, 0.2);*/
+/*}*/
+/*.sidebar-nav li a:active,*/
+/*.sidebar-nav li a:focus {*/
+  /*text-decoration: none;*/
+/*}*/
 .sidebar-nav > .sidebar-brand {
   height: 65px;
   font-size: 18px;
@@ -164,6 +164,21 @@ td.cellIndex:first-child {
     width: 100%;
 }
 
+td.cellDate:first-child {
+    width: 100%;
+}
+
 td.cellNumerical:first-child {
     width: 100%;
 }
+
+
+hr.style14 {
+  border: 0;
+  height: 2px;
+  background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+  background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+}
+

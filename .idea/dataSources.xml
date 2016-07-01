@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="3921285709">
+  <component name="DataSourceManagerImpl" format="xml" hash="1264582206">
     <data-source source="LOCAL" name="Django default" uuid="5f961c4c-1fd3-4d37-a0e4-362821f77f84">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>$PROJECT_DIR$/Penquality/settings.py</remarks>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/BibGrowth</jdbc-url>
       <explain-plan-config>
         <provider>com.intellij.database.plan.ExplainPlanProvider.NullExplainPlanProvider</provider>
       </explain-plan-config>
@@ -19,6 +19,12 @@
           <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/sqlite-jdbc-3.8.9.jar</url>
         </library>
       </libraries>
+    </data-source>
+    <data-source source="LOCAL" name="Sqlite (Xerial) - BibGrowth" uuid="113327d5-e3e1-4370-b9d8-c165353b9305">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/BibGrowth</jdbc-url>
     </data-source>
   </component>
 </project>

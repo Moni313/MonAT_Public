@@ -1,9 +1,6 @@
 angular.module('dqFactory', [])
     .factory('dqFactory',function() {
 
-        //console.log("factory is called");
-
-
         var data = {
 
             doShow: false,
@@ -178,6 +175,7 @@ angular.module('dqFactory', [])
                 var min = 0;
                 var max = 0;
                 var sum = 0;
+                var checkDate = '';
                 angular.forEach(content, function (entry) {
                     if (entry[variable] === null
                         || entry[variable] === ""
@@ -188,6 +186,7 @@ angular.module('dqFactory', [])
                         countMissing += 1;
                     }
                     else {
+                        checkDate = entry[variable];
                         countPresent += 1;
                         sum = sum + parseFloat(entry[variable]);
                         if (parseFloat(entry[variable]) < min)
@@ -197,6 +196,7 @@ angular.module('dqFactory', [])
                     }
                 });
 
+                //console.log("Is ", variable," a date? ", checkDate, " = ", data.isValidDate(checkDate));
 
                 // categorical variables
                 // $log.debug(typeof (sum/countPresent));
@@ -204,20 +204,31 @@ angular.module('dqFactory', [])
                 // console.log(variable);
                 //TODO if there are encoding problems (e.g. gender is encoded with ['F', 'M'] and one value is encoded with ['1', '0'] categorical is not more recognised
                 if(!variable.includes('ID') && (sum/countPresent)) {
+                    //numerical variable
                     row4table.min = min.toFixed(2);
                     row4table.mean = (sum / countPresent).toFixed(2);
                     row4table.max = max.toFixed(2);
                     row4table.numerical = true;
                     row4table.categorical = false;
                     row4table.index = false;
+                    row4table.date = false;
                 }
-                // numerical variables
+                    //TODO uncomment to add date check, then check also the controllers
+                else if(data.isValidDate(checkDate)){
+                //date variable
+                 row4table.date = true;
+                 row4table.numerical = false;
+                 row4table.categorical = false;
+                 row4table.index = false;
+
+                }
                 else {
                     row4table.min = "";
                     row4table.mean = "";
                     row4table.max = "";
 
                     row4table.numerical = false;
+                    row4table.date = false;
 
                     if (variable.includes('ID')) {
                         row4table.index = true;
@@ -271,8 +282,11 @@ angular.module('dqFactory', [])
                    if(variable.state.selected)
                        data.interactions[index].variables.push(variable.name);
                 });
-            }
+            },
 
+            isValidDate: function(obj) {
+                return (Object.prototype.toString.call(obj) === "[object Date]");
+            }
 
             // store: function(){
             //     data.interactions.push({
@@ -526,3 +540,7 @@ angular.module('dqFactory', [])
 
         return restart;
     });
+
+    // .factory('DataSet', ['$resource', 'dqFactory', function($resource, dqFactory){
+    //     return $resource()
+    // }]);

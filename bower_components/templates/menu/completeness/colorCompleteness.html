@@ -1,19 +1,21 @@
-<h5>Color</h5>
-<div class="verticalcenter">
-    <label class="btn-xs" for="selectColorPresent">Present = </label>
+<div class="col-md-12">
+    <h5>Color</h5>
+    <div class="verticalcenter">
+        <label class="btn-xs" for="selectColorPresent">Present = </label>
 
-    <input type="color"
-           ng-model="colorPresent"
-           name="selectColorPresent"
-           ng-change="completenessRefreshColor()" /><br>
+        <input type="color"
+               ng-model="colorPresent"
+               name="selectColorPresent"
+               ng-change="completenessRefreshColor()" /><br>
 
-    <label class="btn-xs" for="selectColorMissing">Missing = </label>
-    <input type="color"
-           ng-model="colorMissing"
-           name="selectColorMissing"
-           ng-change="completenessRefreshColor()" /><br>
-</div>
+        <label class="btn-xs" for="selectColorMissing">Missing = </label>
+        <input type="color"
+               ng-model="colorMissing"
+               name="selectColorMissing"
+               ng-change="completenessRefreshColor()" /><br>
+    </div>
 
-<div class="verticalcenter borderleft">
-    <a role="button" ng-click="completenessResetColor()" class="btn-xs pull-right">Default</a><br>
+    <div class="verticalcenter borderleft">
+        <a role="button" ng-click="completenessResetColor()" class="btn-xs pull-right">Default</a><br>
+    </div>
 </div>

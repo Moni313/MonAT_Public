@@ -38,18 +38,17 @@
     <div class="row well" ng-if="barChartShow" id="barChartShow">
         <div class="col-md-6 pull-left">
 
-
             <nvd3 config="{deepWatchData: true}"
                   options="optionsMultiBarHorizontalChartCompleteness"
                   data="dataMultiBarHorizontalChartCompleteness">
             </nvd3>
             <br>
+            <hr class="col-md-10 col-md-offset-1 style14">
+            <br>
             <nvd3 config="{deepWatchData: true}"
                   options="optionGroupBy"
                   data="dataGroupBy"
                   ng-if="groupByShow"></nvd3>
-            <br>
-            <button type="button" ng-click="restart()" class="btn btn-default btn-xs pull-left">Restart</button>
 
             <br>
             <br>
@@ -59,13 +58,20 @@
         </div>
         <div class="col-md-6">
             <p>Numbers of row uploaded: {[{sizeContent}]}</p>
-            <p ng-if="sizeSubset"><span>Number of row under investigation: {[{sizeSubset}]}</span></p>
+            <p ng-if="sizeSubset"><span>Number of row under investigation: {[{sizeSubset}]}</span>
+            <button type="button" ng-click="restart()" class="btn btn-default btn-xs">Whole Dataset</button>
+            </p>
+
             <!-- table -->
             <ng-table-completeness></ng-table-completeness>
             <!-- end table -->
         </div>
     </div>
 </div>
+
+    <!-- <div class="row col-md-12" ng-if="barChartShow">
+        <ng-parallel-coordinate-ctrl></ng-parallel-coordinate-ctrl>
+    </div> -->
 </div>
     <!-- end horizontal bar chart, sunburst, table -->
 

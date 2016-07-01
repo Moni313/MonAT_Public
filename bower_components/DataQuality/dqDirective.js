@@ -52,19 +52,19 @@ angular.module('dqDirective', [])
         }
     })
 
-    .directive('ngXSelectionPlot', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/completeness/xSelectionPlot.html"
-        }
-    })
+    // .directive('ngXYSelectionPlot', function(){
+    //     return {
+    //         restrict: 'E',
+    //         templateUrl: "/static/templates/menu/completeness/xySelectionPlot.html"
+    //     }
+    // })
 
-    .directive('ngYSelectionPlot', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/completeness/ySelectionPlot.html"
-        }
-    })
+    // .directive('ngYSelectionPlot', function(){
+    //     return {
+    //         restrict: 'E',
+    //         templateUrl: "/static/templates/menu/completeness/ySelectionPlot.html"
+    //     }
+    // })
 
     .directive('ngNumericalPlot', function(){
         return {
@@ -84,6 +84,13 @@ angular.module('dqDirective', [])
         return {
             restrict: 'E',
             templateUrl: "/static/templates/menu/completeness/hybridPlot.html"
+        }
+    })
+
+    .directive('ngParallelCoordinateCtrl', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/completeness/parallelCoordinate.html'
         }
     })
 
@@ -173,40 +180,54 @@ angular.module('dqDirective', [])
         }
     })
 
+    //numericalChart - Completeness
     .directive('ngTableCompleteness', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/tableCompleteness.html"
+            templateUrl: "/static/templates/components/completeness/numericalChart/tableCompleteness.html"
+        }
+    })
+
+    .directive('ngChangeTypeVariables', function () {
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/completeness/numericalChart/changeTypeVariables.html"
         }
     })
 
     .directive('ngContextualMenu', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/contextualMenu.html"
+            templateUrl: "/static/templates/components/completeness/numericalChart/contextualMenu.html"
         }
     })
 
     .directive('ngLeft', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/left.html"
+            templateUrl: "/static/templates/components/completeness/numericalChart/left.html"
         }
     })
 
     .directive('ngBottom', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/bottom.html"
+            templateUrl: "/static/templates/components/completeness/numericalChart/bottom.html"
         }
     })
 
     .directive('ngSharingPlot', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/sharingPlot.html"
+            templateUrl: "/static/templates/components/completeness/numericalChart/sharingPlot.html"
         }
     })
+
+
+
+
+
+
 
 
 

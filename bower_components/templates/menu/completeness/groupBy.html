@@ -2,9 +2,9 @@
     <label class="btn-default btn-xs" for="group">Group by: </label>
     <a role="button" ng-click="resetGroupBy()" class="btn-xs pull-right">Reset</a>
     <br>
-    <select name="group" ng-model="groupBy">
+    <select name="group" ng-model="groupBy" class="col-md-6">
         <option ng-repeat="variable in variables" >{[{variable.name}]}</option>
     </select>
-    <button type="button" ng-click="groupByVariable()" class="btn btn-default btn-xs">Group</button>
+    <!--<button type="button" ng-click="groupByVariable()" class="btn btn-default btn-xs">Group</button> -->
 
 </div>

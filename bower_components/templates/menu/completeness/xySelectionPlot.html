@@ -1,0 +1,28 @@
+<div ng-controller="xyCtrl">
+    <br>
+    <a role="button" ng-click="resetVarX()" class="btn-xs pull-right">Reset</a>
+    <div>
+        <label class="btn-default btn-xs" for="repeatSelectX">X: </label>
+        <select name="repeatSelectX" ng-model="nameX">
+        <option ng-repeat="variable in variables"
+                ng-if="variable.state.isNumerical"
+        >{[{variable.name}]}</option>
+    </select>
+    </div>
+
+    <br>
+    <a role="button" ng-click="resetVarY()" class="btn-xs pull-right">Reset</a>
+    <div>
+        <label class="btn-default btn-xs" for="repeatSelectY">Y: </label>
+        <select name="repeatSelectY" ng-model="nameY" >
+            <option ng-repeat="variable in variables"
+                    ng-if="variable.state.isNumerical"
+            >{[{variable.name}]}</option>
+        </select>
+    </div>
+    <br>
+
+    <label for="plotHeight" class="btn-xs">height of the chart: </label>
+    <input id="plotHeight" type="number" class="btn-xs col-sm-8" ng-model="height"/>
+    <button type="button" ng-click="startPlot()" class="btn btn-default btn-xs col-sm-4">Refresh</button>
+</div>

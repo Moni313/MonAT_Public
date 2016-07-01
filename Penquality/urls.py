@@ -15,15 +15,19 @@ Including another URLconf
 """
 
 from django.conf.urls import url, include
-
-from DataQuality import views
-
+# from DataQuality import views
+from DataQuality.views import IndexView
+#from DataQuality.api import EntryList
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    #url(r'^$', views.index, name='index'),
     #url(r'^admin/', include(admin.site.urls)),
-    #url(r'^DataQuality/', include('DataQuality.urls', namespace="data_quality")),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+
+
+    #url(r'^DataQuality/', EntryList.as_view(), name='entry-list'),
+
+    url('^.*$', IndexView.as_view(), name='index'),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
 

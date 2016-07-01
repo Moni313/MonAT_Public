@@ -33,7 +33,6 @@
 <!-- <script type="text/javascript" src={% static "myJs/myJs.js" %}></script> -->
 
 
-
 <script type="text/javascript" src={% static "angular/angular.js" %}></script>
 <script type="text/javascript" src={% static "d3/d3.min.js" %}></script>
 <script type="text/javascript" src={% static "nvd3/build/nv.d3.js" %}></script> <!-- or use another assembly -->
@@ -46,6 +45,7 @@
 <script type="text/javascript" src={% static "DataQuality/dqFactory.js" %}></script>
 <script type="text/javascript" src={% static "DataQuality/dqDirective.js" %}></script>
 <script type="text/javascript" src={% static "angular-bootstrap/ui-bootstrap-tpls.min.js" %}></script>
+<script type="text/javascript" src={% static "angular-resource/angular-resource.js" %}></script>
 
 
 
@@ -54,10 +54,10 @@
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
       <div class="sidebar-nav">
-         <div ng-controller="varsCtrl">
-             <ng-menu-completeness></ng-menu-completeness>
-             <ng-menu-correctness></ng-menu-correctness>
-             <ng-menu-consistency></ng-menu-consistency>
+         <div ng-controller="varsCtrl" class="panel-group">
+             <ng-menu-completeness></ng-menu-completeness><br>
+             <ng-menu-correctness></ng-menu-correctness><br>
+             <ng-menu-consistency></ng-menu-consistency><br>
              <ng-menu-currency></ng-menu-currency>
         </div>
       </div>
@@ -85,6 +85,7 @@
 
   </div>
   <!-- /#wrapper -->
-
+<div>
+</div>
 </body>
 </html>

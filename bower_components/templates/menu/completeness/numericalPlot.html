@@ -1,16 +1,39 @@
 <div class="well-sm">
     <a role="button" class="btn-default" data-toggle="collapse" data-target="#numericalPlot">Numerical</a>
-    <br>
-    <div id="numericalPlot" class="collapse">
 
-        <ng-x-selection-plot></ng-x-selection-plot>
-        <ng-y-selection-plot></ng-y-selection-plot>
+    <div id="numericalPlot" class="row collapse" ng-controller="xyCtrl">
 
-        <ng-refresh-plot></ng-refresh-plot>
+        <br>
 
-        <ng-plot-input></ng-plot-input>
+        <div class="row col-md-12">
+            <a role="button" ng-click="resetVarX()" class="btn-xs pull-right col-md-2">Reset</a>
 
-         <hr>
+            <label class="btn-default btn-xs col-md-2" for="repeatSelectX">X: </label>
+
+            <select name="repeatSelectX" ng-model="nameX" class="col-md-8">
+                <option ng-repeat="variable in variables"
+                    ng-if="variable.state.isNumerical">{[{variable.name}]}</option>
+            </select>
+        </div>
+
+        <div class="row col-md-12">
+            <a role="button" ng-click="resetVarY()" class="btn-xs pull-right col-md-2">Reset</a>
+
+            <label class="btn-default btn-xs col-md-2" for="repeatSelectY">Y: </label>
+
+            <select name="repeatSelectY" ng-model="nameY" class="col-md-8">
+                <option ng-repeat="variable in variables"
+                        ng-if="variable.state.isNumerical">{[{variable.name}]}</option>
+            </select>
+        </div>
+
+        <div class="row col-md-12">
+            <br>
+            <label for="plotHeight" class="btn-xs col-md-4">height: </label>
+            <input id="plotHeight" type="number" class="btn-xs col-sm-5 text-right" ng-model="height"/>
+            <button type="button" ng-click="startPlot()" class="btn btn-default btn-xs col-sm-3">Refresh</button>
+        </div>
+
+        <hr class="col-md-6 col-md-offset-2 style14">
     </div>
-
 </div>

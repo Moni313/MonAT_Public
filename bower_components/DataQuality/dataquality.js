@@ -7,6 +7,7 @@
             'dqDirective',
             'dqControllers',
             'nvd3',
+            'ngResource'
         ]
     ).config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('{[{');
