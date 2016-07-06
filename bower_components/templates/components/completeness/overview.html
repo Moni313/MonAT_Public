@@ -1,0 +1,18 @@
+<div class="row" ng-show="showChart">
+
+    <nvd3 config="{deepWatchData: true}"
+          options="optionsMultiBarHorizontalChartCompleteness"
+          data="dataMultiBarHorizontalChartCompleteness">
+    </nvd3>
+    <br>
+    <hr class="style14">
+    <br>
+    <nvd3 config="{deepWatchData: true}"
+          options="optionGroupBy"
+          data="dataGroupBy"
+          ng-show="showGroup"></nvd3>
+    <br ng-show="showGroup">
+    <hr class="style14" ng-show="showGroup">
+    <br ng-show="showGroup">
+
+</div>

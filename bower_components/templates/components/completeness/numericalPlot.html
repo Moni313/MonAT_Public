@@ -1,0 +1,41 @@
+<h5>Scatterplot</h5>
+<div class="row col-md-12">
+    <a role="button" ng-click="resetVarX()" class="btn-xs pull-right col-md-2">Reset</a>
+
+    <label class="btn-default btn-xs col-md-2" for="repeatSelectX">X: </label>
+
+    <select name="repeatSelectX" ng-model="nameX" class="col-md-8">
+        <option ng-repeat="variable in variables"
+                ng-if="variable.type == 'numerical'">{[{variable.name}]}</option>
+    </select>
+</div>
+
+<div class="row col-md-12">
+    <a role="button" ng-click="resetVarY()" class="btn-xs pull-right col-md-2">Reset</a>
+
+    <label class="btn-default btn-xs col-md-2" for="repeatSelectY">Y: </label>
+
+    <select name="repeatSelectY" ng-model="nameY" class="col-md-8">
+        <option ng-repeat="variable in variables"
+                ng-if="variable.type == 'numerical'">{[{variable.name}]}</option>
+    </select>
+</div>
+
+<div class="row col-md-12">
+    <br>
+    <a role="button" ng-click="longitudinalReset()" class="btn-xs pull-right col-md-2">Reset</a>
+    <label class="btn-default btn-xs" for="long">Longitudinal: </label><br>
+
+    <select name="long" ng-model="longitudinal">
+        <option ng-repeat="variable in variables"
+                ng-if="variable.type == 'index'">{[{variable.name}]}</option>
+    </select>
+
+</div>
+
+<div class="row col-md-12">
+    <br>
+    <label for="plotHeight" class="btn-xs col-md-4">height: </label>
+    <input id="plotHeight" type="number" class="btn-xs col-sm-5 text-right" ng-model="height"/>
+    <button type="button" ng-click="startPlot()" class="btn btn-default btn-xs col-sm-3">Refresh</button>
+</div>

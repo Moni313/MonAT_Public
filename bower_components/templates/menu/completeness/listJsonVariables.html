@@ -1,11 +1,10 @@
-<h5>Variables</h5>
 <label>
     <input type="checkbox"
            ng-model="allSelected"
            ng-click="completenessCheckAll()"> </input> All</label>
 <a role="button" ng-click="completenessResetAll()" class="btn-xs pull-right">Reset</a><br>
 
-<label class="btn-xs col-sm-6" ng-repeat="variable in variables">
+<label class="btn-xs col-sm-12" ng-repeat="variable in variables">
     <input type="checkbox"
            ng-model="variable.state.selected"
-           ng-click="refreshChart()"> </input> {[{variable.name}]}</label>
+           ng-click="refreshChart()"> </input> {[{variable.name}]}<span class="pull-right">({[{variable.type}]})</span></label>

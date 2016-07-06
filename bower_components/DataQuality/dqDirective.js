@@ -1,12 +1,89 @@
 angular.module('dqDirective', [])
+    .directive('ngVariablesPanel', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/variablePanel.html'
+        }
+    })
 
-    //TODO reshuffle elements and attributes as in directory
-    //templates.components
-    //templates.menu
-    //templates.components.completeness
-    //templates.components.duplication
-    //...
-    //TODO rename some of them (delete stp substring)
+    .directive('ngHorizontalMenu', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/HorizontalMenu.html'
+        }
+    })
+
+    .directive('ngMain', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/components/main.html'
+        }
+    })
+
+    .directive('ngListVariables', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/variables/listVariables.html'
+        }
+    })
+
+    .directive('ngGroupBy', function(){
+        return {
+            restrict: 'E',
+            templateUrl: '/static/templates/menu/variables/groupBy.html'
+        }
+    })
+
+    .directive('ngChangeTypeVariables', function () {
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/menu/variables/changeTypeVariables.html"
+        }
+    })
+
+    .directive('ngColorCompleteness', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/completeness/colorCompleteness.html"
+        }
+    })
+
+    .directive('ngNumericalPlot', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/completeness/numericalPlot.html"
+        }
+    })
+
+    .directive('ngContextualMenu', function(){
+        return {
+            restrict: 'E',
+            templateUrl: "/static/templates/components/completeness/contextualMenu.html"
+        }
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -66,12 +143,7 @@ angular.module('dqDirective', [])
     //     }
     // })
 
-    .directive('ngNumericalPlot', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/completeness/numericalPlot.html"
-        }
-    })
+
 
     .directive('ngCategoricalPlot', function () {
         return {
@@ -109,12 +181,9 @@ angular.module('dqDirective', [])
 
 
     // Elements
-    .directive('ngHorizontalMenu', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/HorizontalMenu.html"
-        }
-    })
+
+
+
 
 
 
@@ -127,12 +196,7 @@ angular.module('dqDirective', [])
         }
     })
 
-    .directive('ngGroupByCompleteness', function(){
-        return {
-            restrict: 'E',
-            templateUrl: '/static/templates/menu/completeness/groupBy.html'
-        }
-    })
+
 
     .directive('ngSqlCompleteness', function () {
         return {
@@ -150,12 +214,7 @@ angular.module('dqDirective', [])
 
 
 
-    .directive('ngColorCompleteness', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/menu/completeness/colorCompleteness.html"
-        }
-    })
+
 
 
     .directive('ngInteraction', function() {
@@ -166,12 +225,7 @@ angular.module('dqDirective', [])
     })
 
 
-    .directive('ngMain', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/components/main.html"
-        }
-    })
+
 
     .directive('ngCompleteness', function(){
         return {
@@ -184,23 +238,13 @@ angular.module('dqDirective', [])
     .directive('ngTableCompleteness', function(){
         return {
             restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/numericalChart/tableCompleteness.html"
+            templateUrl: "/static/templates/components/completeness/numericalChart/table.html"
         }
     })
 
-    .directive('ngChangeTypeVariables', function () {
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/numericalChart/changeTypeVariables.html"
-        }
-    })
 
-    .directive('ngContextualMenu', function(){
-        return {
-            restrict: 'E',
-            templateUrl: "/static/templates/components/completeness/numericalChart/contextualMenu.html"
-        }
-    })
+
+
 
     .directive('ngLeft', function(){
         return {

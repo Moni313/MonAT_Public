@@ -158,6 +158,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
 
                 if(row.numerical) {
                     dqFactory.completeness.variables.push({
+                        type: 'numerical',
                         name: variable,
                         state: {
                             selected: false, //for vertical menu
@@ -184,8 +185,9 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                 }
                 else if(row.date){
                    dqFactory.completeness.variables.push({
-                     name:variable,
-                     state:{
+                       type: 'date',
+                       name:variable,
+                       state:{
                              selected: false,
                              show: false,
                              isNumerical: row.numerical,
@@ -193,7 +195,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                              isIndex: row.index,
                              isDate: row.date
                      },
-                     statistics: {
+                       statistics: {
                          missing: row.missing,
                          missingTotal: row.missing,
                          present: row.present,
@@ -203,6 +205,7 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                 }
                 else{
                     dqFactory.completeness.variables.push({
+                        type: 'categorical',
                         name: variable,
                         state: {
                             selected: false, //for vertical menu
@@ -623,24 +626,28 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
                             variable.state.isDate = false;
                             variable.state.isCategorical = false;
                             variable.state.isNumerical = false;
+                            variable.type = 'index';
                             break;
                         case 'date':
                             variable.state.isIndex = false;
                             variable.state.isDate = true;
                             variable.state.isCategorical = false;
                             variable.state.isNumerical = false;
+                            variable.type = 'date';
                             break;
                         case 'categorical':
                             variable.state.isIndex = false;
                             variable.state.isDate = false;
                             variable.state.isCategorical = true;
                             variable.state.isNumerical = false;
+                            variable.type = 'categorical';
                             break;
                         case 'numerical':
                             variable.state.isIndex = false;
                             variable.state.isDate = false;
                             variable.state.isCategorical = false;
                             variable.state.isNumerical = true;
+                            variable.type = 'numerical';
                             break;
                         default:
                             console.log("no variable changed type");
@@ -2338,6 +2345,21 @@ var dqControllers = angular.module('dqControllers', ['ui.bootstrap', 'dqFactory'
             });
 
         }
+    }]).
+
+
+
+    controller('tabsCtrl', ['$scope', function($scope){
+        $scope.tabs = [
+            { title:'Tables', template:"/static/templates/components/completeness/numericalChart/table.html"},
+            { title:'Completeness', template:"/static/templates/components/completeness.html" },
+            { title:'Correctness', template:"/static/templates/components/correctness.html"},
+            { title:'Actions'}
+        ];
+
+        $scope.model = {
+            name: 'Tabs'
+        };
     }]);
 
 

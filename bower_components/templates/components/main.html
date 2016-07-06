@@ -1,1 +1,8 @@
-<ng-completeness></ng-completeness>
+<p id="barChartShow" class="col-md-12"></p>
+<div ng-controller="tabsCtrl">
+    <uib-tabset active="active">
+        <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{[{tab.title}]}">
+            <div ng-include="tab.template"></div>
+        </uib-tab>
+    </uib-tabset>
+</div>

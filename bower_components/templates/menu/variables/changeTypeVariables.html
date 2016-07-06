@@ -1,0 +1,16 @@
+<div>
+    <a role="button" ng-click="resetTypeVariable()" class="btn-xs pull-right">Reset</a>
+    <div class="pull-left">
+        <label class="btn-default btn-xs" for="changeType">Change Type of </label>
+        <select name="changeType" ng-model="changeTypeVar">
+        <option ng-repeat="variable in variables">{[{variable.name}]}</option>
+        </select>
+
+        <label class="btn-default btn-xs" for="newType">into </label>
+        <select name="newType" ng-model="newTypeVar">
+        <option ng-repeat="type in types">{[{type}]}</option>
+        </select>
+         <button type="button" ng-click="changeTypeOfVariable()" class="btn btn-default btn-xs">Change</button>
+    </div>
+
+</div>

@@ -1,15 +1,14 @@
 {
   "name": "jstat",
   "homepage": "https://github.com/jstat/jstat",
-  "version": "1.5.2",
-  "_release": "1.5.2",
+  "version": "1.5.3",
+  "_release": "1.5.3",
   "_resolution": {
     "type": "version",
-    "tag": "1.5.2",
-    "commit": "23e7fb19bd5c0fd8705d9e279d9401e32c1e5ff5"
+    "tag": "1.5.3",
+    "commit": "44686cd1bc303bf7134a665db5bd89ed1c803cf7"
   },
-  "_source": "git://github.com/jstat/jstat.git",
+  "_source": "https://github.com/jstat/jstat.git",
   "_target": "^1.5.2",
-  "_originalSource": "jstat",
-  "_direct": true
+  "_originalSource": "jstat"
 }

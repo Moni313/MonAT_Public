@@ -1,0 +1,64 @@
+<div class="col-md-6" id="contextualMenu" ng-if="(nameX!='') && (nameY != '')">
+    <h5>Distribution</h5>
+    <div class="row">
+        <label class="btn-xs">
+            <input type="checkbox"
+                   ng-model="showDistributionX"
+                   ng-click="toggleDistributionX()"> Show distribution related to {[{nameX}]}</input>  <br>
+        </label>
+
+        <label class="btn-xs">
+            <input type="checkbox"
+                   ng-model="showDistributionY"
+                   ng-click="toggleDistributionY()"> Show distribution related to {[{nameY}]}</input>  <br>
+        </label>
+    </div>
+
+    <div class="row" ng-show="noneShow > 1">
+        <form name="logic">
+            <label>
+                <input type="radio" ng-model="logicEvaluation" value="AND" ng-click="logicEval()">
+                AND
+            </label> |
+            <label>
+                <input type="radio" ng-model="logicEvaluation" value="OR" ng-click="logicEval()">
+                OR
+            </label>
+
+        </form>
+    </div>
+    <div class="row">
+        <br>
+        <label class="btn-xs col-md-6"
+               ng-repeat="variable in variables" ng-if="variable.state.selected">
+            <input type="checkbox"
+                   ng-model="variable.state.showDistribution"
+                   ng-click="showDistribution()">
+             </input> {[{variable.name}]}
+        </label>
+    </div>
+</div>
+
+
+<div class="col-md-6" ng-if="(nameX!='') && (nameY != '')">
+    <h5>Category in Plot</h5>
+    <div class="row">
+        <label class="btn-xs">
+            <input type="checkbox"
+                   ng-model="showCategoricalInPlot"
+                   ng-click="toggleCategoricalInPlot()"> Show categories in plot</input>  <br>
+        </label>
+    </div>
+
+    <div class="row">
+        <br>
+        <label class="btn-xs col-md-6"
+               ng-repeat="variable in variables" ng-if="(variable.state.selected) && (variable.type == 'categorical')">
+            <input type="checkbox"
+                   ng-model="variable.state.showCategorical"
+                   ng-click="showDistribution()">
+             </input> {[{variable.name}]}
+        </label>
+    </div>
+</div>
+

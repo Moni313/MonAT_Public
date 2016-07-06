@@ -1,0 +1,19 @@
+<!-- plot and bottom/left -->
+<div ng-controller="scatterplotCtrl" ng-show="showScatterplot || showScatterPlotLongitudinal">
+    <div class="row col-md-12">
+
+        <ng-left></ng-left>
+
+        <div class="col-md-12" id="onlyMainPlotAndBottom" >
+
+            <nvd3 options="optionPlot"
+                  data="dataPlot"
+                  config="{deepWatchDataDepth: 0, refreshDataOnly: true}"></nvd3>
+
+            <ng-bottom></ng-bottom>
+        </div>
+
+        <!-- <ng-sharing-plot></ng-sharing-plot> -->
+
+    </div>
+</div>

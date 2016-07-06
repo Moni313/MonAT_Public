@@ -34,15 +34,16 @@
 
 
 <script type="text/javascript" src={% static "angular/angular.js" %}></script>
+<script type="text/javascript" src={% static "angular-linq/angular-linq.js" %}></script>
 <script type="text/javascript" src={% static "d3/d3.min.js" %}></script>
 <script type="text/javascript" src={% static "nvd3/build/nv.d3.js" %}></script> <!-- or use another assembly -->
 <script type="text/javascript" src={% static "angular-nvd3/dist/angular-nvd3.js" %}></script>
 <script type="text/javascript" src={% static "jstat/dist/jstat.min.js" %}></script>
-<script type="text/javascript" src={% static "linq.js_ver2.2.0.2/linq.min.js" %}></script>
+
 
 <script type="text/javascript" src={% static "DataQuality/dataquality.js" %}></script>
-<script type="text/javascript" src={% static "DataQuality/dqControllers.js" %}></script>
-<script type="text/javascript" src={% static "DataQuality/dqFactory.js" %}></script>
+<script type="text/javascript" src={% static "DataQuality/controller.js" %}></script>
+<script type="text/javascript" src={% static "DataQuality/factory.js" %}></script>
 <script type="text/javascript" src={% static "DataQuality/dqDirective.js" %}></script>
 <script type="text/javascript" src={% static "angular-bootstrap/ui-bootstrap-tpls.min.js" %}></script>
 <script type="text/javascript" src={% static "angular-resource/angular-resource.js" %}></script>
@@ -53,33 +54,33 @@
 
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
-      <div class="sidebar-nav">
-         <div ng-controller="varsCtrl" class="panel-group">
-             <ng-menu-completeness></ng-menu-completeness><br>
-             <ng-menu-correctness></ng-menu-correctness><br>
-             <ng-menu-consistency></ng-menu-consistency><br>
-             <ng-menu-currency></ng-menu-currency>
+        <div class="sidebar-nav">
+            <div class="panel-default">
+                <div class="panel-heading">Variables</div>
+                <div class="panel-body">
+                    <ng-variables-panel></ng-variables-panel>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
     <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
-      <div class="container-fluid">
-          <div>
-              <ng-horizontal-menu></ng-horizontal-menu>
-              <button href="#menu-toggle" class="btn btn-default btn-sm" id="menu-toggle" ng-show="menuReady">
-                      <span class="glyphicon glyphicon-menu-hamburger"></span>
-                  </button>
-          </div>
-
-          <div class="row" ng-show="menuReady">
-              <div class="col-lg-12 well-small">
-                  <ng-main></ng-main>
-              </div>
-          </div>
-      </div>
+        <div class="container-fluid">
+            <div>
+                <ng-horizontal-menu></ng-horizontal-menu>
+                <button href="#menu-toggle" class="btn btn-default btn-sm" id="menu-toggle">
+                    <span class="glyphicon glyphicon-menu-hamburger"></span>
+                </button>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-lg-12 well-small">
+                    <ng-main></ng-main>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- /#page-content-wrapper -->
 

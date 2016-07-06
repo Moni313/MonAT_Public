@@ -1,0 +1,12 @@
+<label>
+    <input type="checkbox"
+           ng-model="allSelected"
+           ng-click="variablesCheckAll()"> </input> All</label>
+
+
+<label class="btn-xs col-sm-12" ng-repeat="variable in variables">
+    <input type="checkbox"
+           ng-model="variable.state.selected"
+           ng-click="refreshVariables()"> </input> {[{variable.name}]}<span class="pull-right text-muted">({[{variable.type}]})</span></label>
+
+<a role="button" ng-click="variablesResetAll()" class="btn-xs">Reset</a>

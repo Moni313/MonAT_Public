@@ -1,5 +1,4 @@
 <div class="row well-small">
-
     <div class="col-md-2">
         <h4>MonAT<br /><small>data quality analysis</small></h4>
         <br>
@@ -11,26 +10,5 @@
         <div>
             <h6>File chosen: {[{nameFile}]}</h6>
         </div>
-
-        <!-- response: {[{PostDataResponse}]}
-        details: {[{ResponseDetails}]} -->
-
-    </div>
-
-
-    <div class="col-md-5 well-sm" ng-controller="revisionCtrl" ng-show="doShow">
-        <uib-pagination
-                total-items="bigTotalItems"
-                ng-model="bigCurrentItem"
-                max-size="maxSize"
-                class="pagination-sm"
-                boundary-links="true"
-                rotate="false">
-        </uib-pagination>
-    </div>
-
-
-    <div class="col-md-2 well-sm">
-        <button class="btn btn-default btn-sm" type="submit" ng-show="menuReady" ng-click="saveToPc()">Download</button>
     </div>
 </div>

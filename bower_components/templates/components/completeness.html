@@ -1,77 +1,35 @@
-<!-- if completeness -->
-<div>
-<div ng-controller="plotCtrl">
-    <!-- plot and bottom/left -->
-    <div ng-show="showNumericalPlot">
+<div ng-controller="completenessCtrl" class="row well" ng-show="showChart">
 
-        <!-- <p id="timeExe"></p> -->
-        <div class="row col-md-12">
+    <uib-tabset active="active">
+        <uib-tab index="$index + 1" ng-repeat="t in tabsCompleteness" heading="{[{t.title}]}" >
+            <div ng-include="t.template"></div>
+        </uib-tab>
+    </uib-tabset>
 
-            <ng-contextual-menu></ng-contextual-menu>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="well col-md-12">
+                <p ng-show="showChart">Numbers of row uploaded: {[{sizeContent}]}</p>
+                <p ng-if="sizeSubset"><span>Number of row under investigation: {[{sizeSubset}]}</span><br>
+                <button type="button" ng-click="restart()" class="btn btn-default btn-xs">Whole Dataset</button>
+                </p>
 
-            <ng-left></ng-left>
-
-            <div class="col-md-12" id="onlyMainPlotAndBottom" >
-
-                <nvd3 options="optionPlot"
-                      data="dataPlot"
-                      config="{deepWatchDataDepth: 0, refreshDataOnly: true}"></nvd3>
-
-
-                <ng-bottom></ng-bottom>
             </div>
-
-            <ng-sharing-plot></ng-sharing-plot>
-
+            <ng-color-completeness class="well col-md-12" ng-show="showChart"></ng-color-completeness>
         </div>
+
+
+        <ng-numerical-plot class="well col-md-3" ng-show="showChart"></ng-numerical-plot>
+
+        <ng-contextual-menu class="well col-md-6"></ng-contextual-menu>
+
     </div>
-    <div class="row div_space col-md-12" ng-show="showNumericalPlot"></div>
-</div>
-    <!-- end plot and bottom/left -->
 
-
-
-
-
-<!-- horizontal bar chart, sunburst, table -->
-<div ng-controller="completenessCtrl" >
-    <div class="row well" ng-if="barChartShow" id="barChartShow">
-        <div class="col-md-6 pull-left">
-
-            <nvd3 config="{deepWatchData: true}"
-                  options="optionsMultiBarHorizontalChartCompleteness"
-                  data="dataMultiBarHorizontalChartCompleteness">
-            </nvd3>
-            <br>
-            <hr class="col-md-10 col-md-offset-1 style14">
-            <br>
-            <nvd3 config="{deepWatchData: true}"
-                  options="optionGroupBy"
-                  data="dataGroupBy"
-                  ng-if="groupByShow"></nvd3>
-
-            <br>
-            <br>
-
-            <ng-interaction></ng-interaction>
-
-        </div>
-        <div class="col-md-6">
-            <p>Numbers of row uploaded: {[{sizeContent}]}</p>
-            <p ng-if="sizeSubset"><span>Number of row under investigation: {[{sizeSubset}]}</span>
-            <button type="button" ng-click="restart()" class="btn btn-default btn-xs">Whole Dataset</button>
-            </p>
-
-            <!-- table -->
-            <ng-table-completeness></ng-table-completeness>
-            <!-- end table -->
-        </div>
-    </div>
 </div>
 
     <!-- <div class="row col-md-12" ng-if="barChartShow">
         <ng-parallel-coordinate-ctrl></ng-parallel-coordinate-ctrl>
-    </div> -->
+    </div>
 </div>
     <!-- end horizontal bar chart, sunburst, table -->
 

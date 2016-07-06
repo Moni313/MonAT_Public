@@ -4,8 +4,9 @@
 
     var dataQuality = angular.module('dataQuality',
         [
+            'angular-linq',
             'dqDirective',
-            'dqControllers',
+            'controllers',
             'nvd3',
             'ngResource'
         ]
